@@ -1,16 +1,18 @@
 --=======================================================================
--- URANIUM HUB v1.1
--- - selección de GUI en Settings con live rebuild (sin re-ejecutar)
--- - preview visual de cada estilo antes de aplicar
--- - botones con verificación real de archivos y feedback
--- Ejecutar: loadstring(game:HttpGet("<repo>/Uranium.lua"))()
+-- URANIUM HUB v2.0
+-- - auto-detección de juegos soportados por PlaceId
+-- - popup de confirmación: "¿Ejecutar X?" con Sí / No / Siempre
+-- - cambios de GUI (vitality/sussy/novus/legacy) con preview y rebuild
+-- - ejecución desde repo o disco, con descarga cacheada
+-- Ejecutar: loadstring(game:HttpGet("https://raw.githubusercontent.com/Korsac2026/12345/main/Uranium.lua"))()
 --=======================================================================
 
 local Uranium = {}
 Uranium.Name = "Uranium"
-Uranium.Version = "1.1"
+Uranium.Version = "2.0"
 Uranium.Directory = "uranium"
 Uranium.Sources = {}
+Uranium.AutoDetected = false
 
 local REPO = "https://raw.githubusercontent.com/Korsac2026/12345/main"
 
@@ -20,18 +22,44 @@ local isfile = isfile or function(p)
 end
 
 if not isfolder(Uranium.Directory) then makefolder(Uranium.Directory) end
+if not isfolder(Uranium.Directory .. "/dumps") then makefolder(Uranium.Directory .. "/dumps") end
 
 local function LoadConfig()
-    Uranium.Config = { Gui = "vitality", Bind = "RightShift" }
-    if isfile(`{Uranium.Directory}/gui.txt`) then
-        local s, r = pcall(readfile, `{Uranium.Directory}/gui.txt`)
+    Uranium.Config = { Gui = "vitality" }
+    if isfile(Uranium.Directory .. "/gui.txt") then
+        local s, r = pcall(readfile, Uranium.Directory .. "/gui.txt")
         if s and r ~= "" then Uranium.Config.Gui = r end
     end
 end
 LoadConfig()
 
+-- respuestas "siempre" del usuario: archivo placeId=yes|no
+local function LoadAnswers()
+    Uranium.Answers = {}
+    if isfile(Uranium.Directory .. "/answers.txt") then
+        local s, r = pcall(readfile, Uranium.Directory .. "/answers.txt")
+        if s and r then
+            for line in r:gmatch("[^\r\n]+") do
+                local id, ans = line:match("^(%d+)=(%a+)$")
+                if id and ans then Uranium.Answers[tonumber(id)] = ans end
+            end
+        end
+    end
+end
+LoadAnswers()
+
+local function SaveAnswer(placeId, answer)
+    Uranium.Answers[placeId] = answer
+    local out = {}
+    for id, ans in pairs(Uranium.Answers) do
+        table.insert(out, tostring(id) .. "=" .. ans)
+    end
+    table.sort(out)
+    writefile(Uranium.Directory .. "/answers.txt", table.concat(out, "\n"))
+end
+
 --=======================================================================
--- LIBRARIES con estilos para preview
+-- LIBRARIES
 --=======================================================================
 Uranium.Libraries = {
     vitality = {
@@ -60,7 +88,6 @@ Uranium.Libraries = {
     },
 }
 
--- adapter unificado: todas las libs comparten interface Vitality-like
 function Uranium.LoadLibrary(key)
     local lib = Uranium.Libraries[key]
     if not lib then return nil end
@@ -76,7 +103,7 @@ function Uranium.LoadLibrary(key)
     if not okw or not Window then
         return nil, lib.Name .. " no creó ventana (API incompatible)"
     end
-    local okwm, Watermark
+    local Watermark
     pcall(function()
         Watermark = Lib.WatermarkObject or Lib:Watermark({ Name = "Uranium", SubName = "v" .. Uranium.Version })
     end)
@@ -98,13 +125,125 @@ function Uranium.LoadLibrary(key)
 end
 
 --=======================================================================
--- PREVIEW de estilos: mini ventana demo con las colors de cada GUI
+-- POPUP DE CONFIRMACIÓN (auto-detección)
+-- estilizado con los colores de la GUI activa
+--=======================================================================
+function Uranium.ConfirmPopup(title, description, callback)
+    local lib = Uranium.Libraries[Uranium.Config.Gui] or Uranium.Libraries.vitality
+    local CoreGui = gethui and gethui() or game:GetService("CoreGui")
+
+    local old = CoreGui:FindFirstChild("UraniumConfirm")
+    if old then old:Destroy() end
+
+    local SG = Instance.new("ScreenGui")
+    SG.Name = "UraniumConfirm"
+    SG.ResetOnSpawn = false
+    SG.IgnoreGuiInset = true
+    pcall(function() SG.Parent = CoreGui end)
+
+    -- dim background
+    local Dim = Instance.new("Frame")
+    Dim.Size = UDim2.new(1, 0, 1, 0)
+    Dim.BackgroundColor3 = Color3.new(0, 0, 0)
+    Dim.BackgroundTransparency = 0.4
+    Dim.BorderSizePixel = 0
+    Dim.Parent = SG
+
+    local Frame = Instance.new("Frame")
+    Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+    Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    Frame.Size = UDim2.new(0, 340, 0, 220)
+    Frame.BackgroundColor3 = lib.Bg
+    Frame.BorderSizePixel = 0
+    Frame.ClipsDescendants = true
+    Frame.Parent = SG
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 10)
+    Corner.Parent = Frame
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Color = lib.Accent
+    Stroke.Thickness = 1.5
+    Stroke.Transparency = 0.2
+    Stroke.Parent = Frame
+
+    local Title = Instance.new("TextLabel")
+    Title.BackgroundTransparency = 1
+    Title.Position = UDim2.new(0, 16, 0, 12)
+    Title.Size = UDim2.new(1, -32, 0, 24)
+    Title.Font = Enum.Font.GothamBold
+    Title.Text = title
+    Title.TextColor3 = lib.Accent
+    Title.TextSize = 16
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Parent = Frame
+
+    local Desc = Instance.new("TextLabel")
+    Desc.BackgroundTransparency = 1
+    Desc.Position = UDim2.new(0, 16, 0, 40)
+    Desc.Size = UDim2.new(1, -32, 0, 60)
+    Desc.Font = Enum.Font.Gotham
+    Desc.Text = description
+    Desc.TextColor3 = Color3.fromRGB(220, 220, 230)
+    Desc.TextSize = 13
+    Desc.TextWrapped = true
+    Desc.TextXAlignment = Enum.TextXAlignment.Left
+    Desc.TextYAlignment = Enum.TextYAlignment.Top
+    Desc.Parent = Frame
+
+    local function mkBtn(text, x, w, color, cb)
+        local b = Instance.new("TextButton")
+        b.Position = UDim2.new(0, x, 1, -56)
+        b.Size = UDim2.new(0, w, 0, 40)
+        b.BackgroundColor3 = color
+        b.BorderSizePixel = 0
+        b.Font = Enum.Font.GothamBold
+        b.Text = text
+        b.TextSize = 13
+        b.TextColor3 = Color3.fromRGB(255, 255, 255)
+        b.Parent = Frame
+        local c = Instance.new("UICorner")
+        c.CornerRadius = UDim.new(0, 8)
+        c.Parent = b
+        b.MouseButton1Click:Connect(function()
+            SG:Destroy()
+            if cb then cb() end
+        end)
+        return b
+    end
+
+    local darkBg = lib.Bg:Lerp(Color3.new(0, 0, 0), 0.45)
+
+    mkBtn("Ejecutar", 16, 150, lib.Accent, function() callback("yes") end)
+    mkBtn("No", 174, 70, darkBg, function() callback("no") end)
+    mkBtn("Siempre", 250, 74, lib.Accent:Lerp(Color3.new(1,1,1), 0.25), function() callback("always") end)
+
+    local Hint = Instance.new("TextLabel")
+    Hint.BackgroundTransparency = 1
+    Hint.Position = UDim2.new(0, 16, 1, -30)
+    Hint.Size = UDim2.new(1, -32, 0, 22)
+    Hint.Font = Enum.Font.Gotham
+    Hint.Text = "Siempre = no volver a preguntar en este juego"
+    Hint.TextColor3 = Color3.fromRGB(140, 140, 150)
+    Hint.TextSize = 10
+    Hint.TextXAlignment = Enum.TextXAlignment.Left
+    Hint.Parent = Frame
+
+    -- auto-cerrar en 25s como "no"
+    task.delay(25, function()
+        if SG and SG.Parent then
+            SG:Destroy()
+            callback("no")
+        end
+    end)
+end
+
+--=======================================================================
+-- PREVIEW de estilos
 --=======================================================================
 function Uranium.PreviewGui(key)
     local lib = Uranium.Libraries[key]
     if not lib then return end
     local CoreGui = gethui and gethui() or game:GetService("CoreGui")
-    -- limpiar preview anterior
     local old = CoreGui:FindFirstChild("UraniumPreview")
     if old then old:Destroy() end
 
@@ -115,7 +254,6 @@ function Uranium.PreviewGui(key)
     pcall(function() SG.Parent = CoreGui end)
 
     local Frame = Instance.new("Frame")
-    Frame.Name = "PreviewCard"
     Frame.AnchorPoint = Vector2.new(0.5, 0.5)
     Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
     Frame.Size = UDim2.new(0, 260, 0, 180)
@@ -143,9 +281,7 @@ function Uranium.PreviewGui(key)
     Title.TextXAlignment = Enum.TextXAlignment.Left
     Title.Parent = Frame
 
-    -- mini toggle demo
     local tog = Instance.new("TextButton")
-    tog.Name = "DemoToggle"
     tog.Position = UDim2.new(0, 12, 0, 44)
     tog.Size = UDim2.new(1, -24, 0, 28)
     tog.BackgroundColor3 = lib.Accent
@@ -163,7 +299,6 @@ function Uranium.PreviewGui(key)
         tog.BackgroundColor3 = on and lib.Accent or lib.Bg:Lerp(Color3.new(0,0,0), 0.3)
     end)
 
-    -- mini slider demo
     local slid = Instance.new("Frame")
     slid.Position = UDim2.new(0, 12, 0, 82)
     slid.Size = UDim2.new(1, -24, 0, 20)
@@ -187,7 +322,6 @@ function Uranium.PreviewGui(key)
     sTxt.TextXAlignment = Enum.TextXAlignment.Left
     sTxt.Parent = slid
 
-    -- botones aplicar / cerrar
     local apply = Instance.new("TextButton")
     apply.Position = UDim2.new(0, 12, 0, 112)
     apply.Size = UDim2.new(0.5, -15, 0, 26)
@@ -228,7 +362,6 @@ function Uranium.PreviewGui(key)
     note.TextWrapped = true
     note.Parent = Frame
 
-    -- auto-cerrar en 30s
     task.delay(30, function()
         if SG and SG.Parent then SG:Destroy() end
     end)
@@ -238,7 +371,7 @@ end
 -- REGISTRO DE SOURCES
 --=======================================================================
 function Uranium.RegisterSource(Name, PlaceIds, Func)
-    table.insert(Uranium.Sources, { Name = Name, PlaceIds = PlaceIds, Func = Func, Supported = false })
+    table.insert(Uranium.Sources, { Name = Name, PlaceIds = PlaceIds, Func = Func })
 end
 
 function Uranium.Notify(Title, Desc, Time)
@@ -254,6 +387,83 @@ function Uranium.Notify(Title, Desc, Time)
 end
 
 --=======================================================================
+-- AUTO-DETECCIÓN
+--=======================================================================
+function Uranium.GetSupported(placeId)
+    local found = {}
+    for _, Source in ipairs(Uranium.Sources) do
+        if table.find(Source.PlaceIds, placeId) then
+            table.insert(found, Source)
+        end
+    end
+    return found
+end
+
+function Uranium.RunSource(Source)
+    local ok, err = pcall(Source.Func, Uranium)
+    if not ok then
+        warn("[Uranium] source " .. Source.Name .. " failed: " .. tostring(err))
+        Uranium.Notify("Uranium", "Error en " .. Source.Name .. ": " .. tostring(err), 7)
+    else
+        Uranium.AutoDetected = true
+    end
+end
+
+function Uranium.AutoDetect()
+    local placeId = game.PlaceId
+    local supported = Uranium.GetSupported(placeId)
+
+    if #supported == 0 then
+        Uranium.Notify("Uranium", "Juego no soportado aún.\nHub cargado en modo universal.", 6)
+        return
+    end
+
+    -- si el usuario ya respondió "always" o "no" para este placeId, respetar
+    local saved = Uranium.Answers[placeId]
+    if saved == "yes" or saved == "always" then
+        for _, Source in ipairs(supported) do
+            Uranium.RunSource(Source)
+        end
+        Uranium.Notify("Uranium", "Auto-ejecutando " .. supported[1].Name .. " (recordado).", 4)
+        return
+    elseif saved == "no" then
+        Uranium.Notify("Uranium", "Marcaste No para este juego. Puedes ejecutarlo manualmente en su página.", 5)
+        -- igual construir la página para que pueda ejecutarlo manual
+        for _, Source in ipairs(supported) do
+            Uranium.RunSource(Source)
+        end
+        return
+    end
+
+    -- preguntar
+    local names = {}
+    for _, s in ipairs(supported) do table.insert(names, s.Name) end
+    Uranium.ConfirmPopup(
+        "Juego detectado",
+        "Este juego tiene soporte en Uranium:\n" .. table.concat(names, ", ") .. "\n\n¿Quieres ejecutar el script?",
+        function(answer)
+            if answer == "always" then
+                SaveAnswer(placeId, "always")
+            elseif answer == "no" then
+                SaveAnswer(placeId, "no")
+            end
+            if answer == "yes" or answer == "always" then
+                for _, Source in ipairs(supported) do
+                    Uranium.RunSource(Source)
+                end
+                Uranium.Notify("Uranium", "Ejecutando " .. table.concat(names, ", ") .. ".", 4)
+            else
+                Uranium.Notify("Uranium", "No ejecutado. Disponible manualmente en su página.", 5)
+                -- construir páginas manualmente igual para acceso posterior
+                for _, Source in ipairs(supported) do
+                    Uranium.RunSource(Source)
+                end
+            end
+        end
+    )
+end
+
+--=======================================================================
 -- CONSTRUCCIÓN DEL HUB (reconstruible en runtime)
 --=======================================================================
 local Building = false
@@ -263,11 +473,9 @@ function Uranium.SetGui(key)
     if not Uranium.Libraries[key] then return end
     Building = true
 
-    -- guardar elección
-    writefile(`{Uranium.Directory}/gui.txt`, key)
+    writefile(Uranium.Directory .. "/gui.txt", key)
     Uranium.Config.Gui = key
 
-    -- destruir GUI anterior
     if Uranium.Gui then
         pcall(function()
             if Uranium.Gui.Watermark and Uranium.Gui.Watermark.Remove then Uranium.Gui.Watermark:Remove() end
@@ -276,7 +484,6 @@ function Uranium.SetGui(key)
             if Uranium.Gui.Window and Uranium.Gui.Window.Remove then Uranium.Gui.Window:Remove() end
         end)
         local CoreGui = gethui and gethui() or game:GetService("CoreGui")
-        -- matar screens uranium huérfanos
         for _, v in ipairs(CoreGui:GetChildren()) do
             if v.Name:find("Uranium") or v.Name == "Vitality" or v.Name == "Watermark" then
                 pcall(function() v:Destroy() end)
@@ -284,12 +491,11 @@ function Uranium.SetGui(key)
         end
     end
 
-    -- cargar nueva
     local gui, err = Uranium.LoadLibrary(key)
     if not gui then
         Building = false
         Uranium.Notify("Uranium", tostring(err) .. ".\nVolviendo a Vitality.", 7)
-        writefile(`{Uranium.Directory}/gui.txt`, "vitality")
+        writefile(Uranium.Directory .. "/gui.txt", "vitality")
         gui = Uranium.LoadLibrary("vitality")
         if not gui then return end
     end
@@ -320,7 +526,7 @@ function Uranium.Build()
     local current = Uranium.Libraries[Uranium.Config.Gui] and Uranium.Libraries[Uranium.Config.Gui].Name or "Vitality"
 
     Gui.Dropdown(Sec, "Estilo actual", names, current, "uranium_style", function(v)
-        -- solo informa; aplicar es con preview o botón
+        -- solo informativo; aplicar es con preview o botón
     end)
 
     for _, name in ipairs(names) do
@@ -330,39 +536,56 @@ function Uranium.Build()
         end)
     end
 
+    local SecD = Gui.Section(SettingsPage, "Detección", 1)
+    Gui.Button(SecD, "Re-detectar juego actual", function()
+        Uranium.AutoDetect()
+    end)
+    Gui.Button(SecD, "Resetear respuestas guardadas", function()
+        Uranium.Answers = {}
+        if isfile(Uranium.Directory .. "/answers.txt") then
+            delfile(Uranium.Directory .. "/answers.txt")
+        end
+        Uranium.Notify("Uranium", "Respuestas reseteadas. Se volverá a preguntar.", 4)
+    end)
+
     local SecR = Gui.Section(SettingsPage, "Uranium", 2)
-    Gui.Label(SecR, "Uranium Hub v" .. Uranium.Version .. "\nRepo: Korsac2026/12345\nSources deobfuscados en cada update.")
+    Gui.Label(SecR, "Uranium Hub v" .. Uranium.Version .. "\nRepo: Korsac2026/12345\nAuto-detección activa.")
     Gui.Button(SecR, "Recargar Hub (misma GUI)", function()
         Uranium.Notify("Uranium", "Reconstruyendo...", 3)
         Uranium.SetGui(Uranium.Config.Gui)
     end)
-    Gui.Button(SecR, "Re-ejecutar Script Completo", function()
-        Uranium.Notify("Uranium", "Ejecuta el loader de nuevo desde tu executor.", 4)
-    end)
 
-    -- SOURCES
+    -- SOURCES: construir páginas para todos los juegos soportados del actual
     local PlaceId = game.PlaceId
+    local supported = Uranium.GetSupported(PlaceId)
     local any = false
-    for _, Source in ipairs(Uranium.Sources) do
-        if table.find(Source.PlaceIds, PlaceId) then
-            any = true
-            local ok, err = pcall(Source.Func, Uranium)
-            if not ok then
-                warn(`[Uranium] source {Source.Name} failed: {err}`)
-            end
+    for _, Source in ipairs(supported) do
+        any = true
+        -- solo ejecutar automáticamente si ya fue auto-detectado antes;
+        -- si no, la página se construye igual para acceso manual
+        if Uranium.AutoDetected then
+            -- ya corrió, no duplicar
+        else
+            -- Build se llama antes de AutoDetect en el arranque,
+            -- así que aquí solo construimos la página (la ejecución
+            -- del Func construye la página, se llama una sola vez)
+        end
+        local ok, err = pcall(Source.Func, Uranium)
+        if not ok then
+            warn("[Uranium] source " .. Source.Name .. " failed: " .. tostring(err))
         end
     end
 
+    -- siempre mostrar lista de juegos soportados en el hub
     if not any then
         local MainPage = Gui.Page("Main")
         local MSec = Gui.Section(MainPage, "Uranium", 1)
-        Gui.Label(MSec, "Uranium Hub v" .. Uranium.Version .. "\n\nSin módulos para este juego aún.\nVe consiguiendo sources y se agregan aquí.")
+        Gui.Label(MSec, "Uranium Hub v" .. Uranium.Version .. "\n\nEste juego no tiene módulos aún.\nSoportados:\n- Blox Fruits\n- Operation One\n\nConsigue más sources y se agregan.")
     end
 end
 
 --=======================================================================
 -- SOURCES REGISTRADOS
--- (módulos del repo; cada uno llama RegisterSource al cargar)
 --=======================================================================
 
 -- Blox Fruits
@@ -392,7 +615,7 @@ Uranium.RegisterSource("Uranium Blox Fruits", { 2753915549, 4442272183, 74494236
 
     local Sec2 = Gui.Section(Page, "Script Completo", 2)
     Gui.Button(Sec2, "Cargar desde Repo", function()
-        local url = `{REPO}/src/uranium/dumps/bloxfruits_deob.lua`
+        local url = REPO .. "/src/uranium/dumps/bloxfruits_deob.lua"
         local ok, err = pcall(function()
             loadstring(game:HttpGet(url))()
         end)
@@ -417,12 +640,11 @@ Uranium.RegisterSource("Uranium Blox Fruits", { 2753915549, 4442272183, 74494236
         end
     end)
     Gui.Button(Sec2, "Descargar a Disco", function()
-        local url = `{REPO}/src/uranium/dumps/bloxfruits_deob.lua`
+        local url = REPO .. "/src/uranium/dumps/bloxfruits_deob.lua"
         local ok, res = pcall(function()
             return game:HttpGet(url, true)
         end)
         if ok and res and #res > 1000 then
-            if not isfolder("uranium/dumps") then makefolder("uranium/dumps") end
             writefile("uranium/dumps/bloxfruits_deob.lua", res)
             Uranium.Notify("Uranium", "Descargado a uranium/dumps/ (" .. #res .. " bytes).", 5)
         else
@@ -431,17 +653,17 @@ Uranium.RegisterSource("Uranium Blox Fruits", { 2753915549, 4442272183, 74494236
     end)
 end)
 
--- Operation One (Astro) — dump funcional del payload ZSTD (VM interpretable, sin anti-tamper)
+-- Operation One (Astro)
 Uranium.RegisterSource("Uranium Operation One", { 253832, 6229116934 }, function(Uranium)
     local Gui = Uranium.Gui
     local Page = Gui.Page("Operation One")
     local Sec = Gui.Section(Page, "Uranium Operation One", 1)
 
-    Gui.Label(Sec, "Payload dumpeado del loader de Operation One (Astro).\nYa sin key system, sin anti-tamper, sin rejoin kick.\nEl script original corre completo con su propia GUI (Obsidian).")
+    Gui.Label(Sec, "Payload dumpeado del loader de Operation One (Astro).\nSin key system, sin anti-tamper, sin rejoin kick.\nEl script original corre completo con su propia GUI (Obsidian).")
 
     local Sec2 = Gui.Section(Page, "Cargar", 2)
     Gui.Button(Sec2, "Ejecutar desde Repo", function()
-        local url = `{REPO}/src/uranium/dumps/operationone_dump.lua`
+        local url = REPO .. "/src/uranium/dumps/operationone_dump.lua"
         local ok, err = pcall(function()
             loadstring(game:HttpGet(url))()
         end)
@@ -452,12 +674,11 @@ Uranium.RegisterSource("Uranium Operation One", { 253832, 6229116934 }, function
         end
     end)
     Gui.Button(Sec2, "Descargar a Disco", function()
-        local url = `{REPO}/src/uranium/dumps/operationone_dump.lua`
+        local url = REPO .. "/src/uranium/dumps/operationone_dump.lua"
         local ok, res = pcall(function()
             return game:HttpGet(url, true)
         end)
         if ok and res and #res > 10000 then
-            if not isfolder("uranium/dumps") then makefolder("uranium/dumps") end
             writefile("uranium/dumps/operationone_dump.lua", res)
             Uranium.Notify("Uranium", "Guardado a disco (" .. #res .. " bytes).", 5)
         else
@@ -490,6 +711,11 @@ if not gui then
 end
 Uranium.Gui = gui
 Uranium.Build()
+
+-- auto-detección tras construir el hub
+task.delay(0.5, function()
+    Uranium.AutoDetect()
+end)
 
 Uranium.Notify("Uranium", "Hub cargado — v" .. Uranium.Version, 4)
 shared.Uranium = Uranium
