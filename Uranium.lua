@@ -431,6 +431,55 @@ Uranium.RegisterSource("Uranium Blox Fruits", { 2753915549, 4442272183, 74494236
     end)
 end)
 
+-- Operation One (Astro) — dump funcional del payload ZSTD (VM interpretable, sin anti-tamper)
+Uranium.RegisterSource("Uranium Operation One", { 253832, 6229116934 }, function(Uranium)
+    local Gui = Uranium.Gui
+    local Page = Gui.Page("Operation One")
+    local Sec = Gui.Section(Page, "Uranium Operation One", 1)
+
+    Gui.Label(Sec, "Payload dumpeado del loader de Operation One (Astro).\nYa sin key system, sin anti-tamper, sin rejoin kick.\nEl script original corre completo con su propia GUI (Obsidian).")
+
+    local Sec2 = Gui.Section(Page, "Cargar", 2)
+    Gui.Button(Sec2, "Ejecutar desde Repo", function()
+        local url = `{REPO}/src/uranium/dumps/operationone_dump.lua`
+        local ok, err = pcall(function()
+            loadstring(game:HttpGet(url))()
+        end)
+        if ok then
+            Uranium.Notify("Uranium", "Operation One cargado.", 4)
+        else
+            Uranium.Notify("Uranium", "Error: " .. tostring(err), 7)
+        end
+    end)
+    Gui.Button(Sec2, "Descargar a Disco", function()
+        local url = `{REPO}/src/uranium/dumps/operationone_dump.lua`
+        local ok, res = pcall(function()
+            return game:HttpGet(url, true)
+        end)
+        if ok and res and #res > 10000 then
+            if not isfolder("uranium/dumps") then makefolder("uranium/dumps") end
+            writefile("uranium/dumps/operationone_dump.lua", res)
+            Uranium.Notify("Uranium", "Guardado a disco (" .. #res .. " bytes).", 5)
+        else
+            Uranium.Notify("Uranium", "Descarga fallida.", 5)
+        end
+    end)
+    Gui.Button(Sec2, "Ejecutar desde Disco", function()
+        if isfile("uranium/dumps/operationone_dump.lua") then
+            local ok, err = pcall(function()
+                loadstring(readfile("uranium/dumps/operationone_dump.lua"))()
+            end)
+            if ok then
+                Uranium.Notify("Uranium", "Cargado desde disco.", 4)
+            else
+                Uranium.Notify("Uranium", "Error: " .. tostring(err), 7)
+            end
+        else
+            Uranium.Notify("Uranium", "No está en disco todavía.", 5)
+        end
+    end)
+end)
+
 --=======================================================================
 -- ARRANQUE
 --=======================================================================
