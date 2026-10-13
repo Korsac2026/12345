@@ -1,227 +1,448 @@
 --=======================================================================
--- URANIUM HUB
--- Hub principal — todo bajo la marca Uranium
--- GUI: Vitality (default) o alternativas de uibin.orqan.xyz via Settings
--- Ejecutar: loadstring(game:HttpGet("<tu-repo>/Uranium.lua"))()
+-- URANIUM HUB v1.1
+-- - selección de GUI en Settings con live rebuild (sin re-ejecutar)
+-- - preview visual de cada estilo antes de aplicar
+-- - botones con verificación real de archivos y feedback
+-- Ejecutar: loadstring(game:HttpGet("<repo>/Uranium.lua"))()
 --=======================================================================
 
 local Uranium = {}
 Uranium.Name = "Uranium"
-Uranium.Version = "1.0"
+Uranium.Version = "1.1"
 Uranium.Directory = "uranium"
+Uranium.Sources = {}
 
--- configuración persistente
-Uranium.Config = {
-    Gui = "vitality",
-    Bind = "RightShift",
-}
+local REPO = "https://raw.githubusercontent.com/Korsac2026/12345/main"
 
 local isfile = isfile or function(p)
     local s, r = pcall(readfile, p)
     return s and r ~= nil and r ~= ""
 end
-local cloneref = cloneref or function(r) return r end
 
 if not isfolder(Uranium.Directory) then makefolder(Uranium.Directory) end
 
 local function LoadConfig()
+    Uranium.Config = { Gui = "vitality", Bind = "RightShift" }
     if isfile(`{Uranium.Directory}/gui.txt`) then
         local s, r = pcall(readfile, `{Uranium.Directory}/gui.txt`)
-        if s then Uranium.Config.Gui = r end
-    end
-    if isfile(`{Uranium.Directory}/bind.txt`) then
-        local s, r = pcall(readfile, `{Uranium.Directory}/bind.txt`)
-        if s and r ~= "" then Uranium.Config.Bind = r end
+        if s and r ~= "" then Uranium.Config.Gui = r end
     end
 end
 LoadConfig()
 
 --=======================================================================
--- GUI LIBRARIES disponibles
--- el hub intenta cargar la elegida; si falla, cae a Vitality
+-- LIBRARIES con estilos para preview
 --=======================================================================
 Uranium.Libraries = {
     vitality = {
-        Name = "Vitality (default)",
+        Name = "Vitality",
+        Accent = Color3.fromRGB(120, 200, 120),
+        Bg = Color3.fromRGB(25, 25, 30),
         Url = "https://raw.githubusercontent.com/cueshut/vitremake/main/vitality.lua",
-        -- adapter: devuelve {Window, Watermark, MakeSection...}
-        Load = function(self)
-            local Lib = loadstring(game:HttpGet(self.Url))()
-            local Window = Lib:Window({ Name = "Uranium" })
-            local Watermark = Lib.WatermarkObject or Lib:Watermark({ Name = "Uranium", SubName = "v" .. Uranium.Version })
-            return {
-                Library = Lib,
-                Window = Window,
-                Watermark = Watermark,
-                Page = function(name) return Window:Page({ Name = name }) end,
-                Section = function(page, name, side) return page:Section({ Name = name, Side = side or 1 }) end,
-                Toggle = function(sec, name, def, flag, cb) return sec:Toggle({ Name = name, Flag = flag, Default = def, Callback = cb }) end,
-                Slider = function(sec, name, min, max, def, flag, cb) return sec:Slider({ Name = name, Flag = flag, Min = min, Max = max, Default = def, Callback = cb }) end,
-                Dropdown = function(sec, name, items, def, flag, cb) return sec:Dropdown({ Name = name, Flag = flag, Items = items, Default = def, Callback = cb }) end,
-                Button = function(sec, name, cb) return sec:Button({ Name = name, Callback = cb }) end,
-                Label = function(sec, text) return sec:Label({ Name = text }) end,
-                Keybind = function(sec, name, flag, cb) return sec:Keybind({ Name = name, Flag = flag, Callback = cb }) end,
-                Colorpicker = function(sec, flag, def, cb) return sec:Colorpicker({ Flag = flag, Default = def, Callback = cb }) end,
-            }
-        end
     },
     sussy = {
-        Name = "Sussy (uibin)",
+        Name = "Sussy",
+        Accent = Color3.fromRGB(255, 105, 180),
+        Bg = Color3.fromRGB(30, 20, 30),
         Url = "https://uibin.orqan.xyz/sussy",
-        Load = function(self)
-            local Lib = loadstring(game:HttpGet(self.Url))()
-            -- sussy usa interface similar a Vitality (fork)
-            local Window = Lib:Window({ Name = "Uranium" })
-            return {
-                Library = Lib, Window = Window,
-                Page = function(name) return Window:Page({ Name = name }) end,
-                Section = function(page, name, side) return page:Section({ Name = name, Side = side or 1 }) end,
-                Toggle = function(sec, name, def, flag, cb) return sec:Toggle({ Name = name, Flag = flag, Default = def, Callback = cb }) end,
-                Slider = function(sec, name, min, max, def, flag, cb) return sec:Slider({ Name = name, Flag = flag, Min = min, Max = max, Default = def, Callback = cb }) end,
-                Dropdown = function(sec, name, items, def, flag, cb) return sec:Dropdown({ Name = name, Flag = flag, Items = items, Default = def, Callback = cb }) end,
-                Button = function(sec, name, cb) return sec:Button({ Name = name, Callback = cb }) end,
-                Label = function(sec, text) return sec:Label({ Name = text }) end,
-                Keybind = function(sec, name, flag, cb) return sec:Keybind({ Name = name, Flag = flag, Callback = cb }) end,
-                Colorpicker = function(sec, flag, def, cb) return sec:Colorpicker({ Flag = flag, Default = def, Callback = cb }) end,
-            }
-        end
     },
     novus = {
-        Name = "Novus (uibin)",
+        Name = "Novus",
+        Accent = Color3.fromRGB(90, 160, 255),
+        Bg = Color3.fromRGB(20, 25, 35),
         Url = "https://uibin.orqan.xyz/novus",
-        Load = function(self)
-            local Lib = loadstring(game:HttpGet(self.Url))()
-            local Window = Lib:Window({ Name = "Uranium" })
-            return {
-                Library = Lib, Window = Window,
-                Page = function(name) return Window:Page({ Name = name }) end,
-                Section = function(page, name, side) return page:Section({ Name = name, Side = side or 1 }) end,
-                Toggle = function(sec, name, def, flag, cb) return sec:Toggle({ Name = name, Flag = flag, Default = def, Callback = cb }) end,
-                Slider = function(sec, name, min, max, def, flag, cb) return sec:Slider({ Name = name, Flag = flag, Min = min, Max = max, Default = def, Callback = cb }) end,
-                Dropdown = function(sec, name, items, def, flag, cb) return sec:Dropdown({ Name = name, Flag = flag, Items = items, Default = def, Callback = cb }) end,
-                Button = function(sec, name, cb) return sec:Button({ Name = name, Callback = cb }) end,
-                Label = function(sec, text) return sec:Label({ Name = text }) end,
-                Keybind = function(sec, name, flag, cb) return sec:Keybind({ Name = name, Flag = flag, Callback = cb }) end,
-                Colorpicker = function(sec, flag, def, cb) return sec:Colorpicker({ Flag = flag, Default = def, Callback = cb }) end,
-            }
-        end
     },
     legacy = {
-        Name = "Legacy (uibin)",
+        Name = "Legacy",
+        Accent = Color3.fromRGB(255, 180, 60),
+        Bg = Color3.fromRGB(30, 28, 20),
         Url = "https://uibin.orqan.xyz/legacy",
-        Load = function(self)
-            local Lib = loadstring(game:HttpGet(self.Url))()
-            local Window = Lib:Window({ Name = "Uranium" })
-            return {
-                Library = Lib, Window = Window,
-                Page = function(name) return Window:Page({ Name = name }) end,
-                Section = function(page, name, side) return page:Section({ Name = name, Side = side or 1 }) end,
-                Toggle = function(sec, name, def, flag, cb) return sec:Toggle({ Name = name, Flag = flag, Default = def, Callback = cb }) end,
-                Slider = function(sec, name, min, max, def, flag, cb) return sec:Slider({ Name = name, Flag = flag, Min = min, Max = max, Default = def, Callback = cb }) end,
-                Dropdown = function(sec, name, items, def, flag, cb) return sec:Dropdown({ Name = name, Flag = flag, Items = items, Default = def, Callback = cb }) end,
-                Button = function(sec, name, cb) return sec:Button({ Name = name, Callback = cb }) end,
-                Label = function(sec, text) return sec:Label({ Name = text }) end,
-                Keybind = function(sec, name, flag, cb) return sec:Keybind({ Name = name, Flag = flag, Callback = cb }) end,
-                Colorpicker = function(sec, flag, def, cb) return sec:Colorpicker({ Flag = flag, Default = def, Callback = cb }) end,
-            }
-        end
     },
 }
 
--- cargar GUI elegida con fallback a vitality
-Uranium.Gui = nil
-local LibraryKey = Uranium.Config.Gui
-if Uranium.Libraries[LibraryKey] then
-    local ok, result = pcall(Uranium.Libraries[LibraryKey].Load, Uranium.Libraries[LibraryKey])
-    if ok and result then
-        Uranium.Gui = result
+-- adapter unificado: todas las libs comparten interface Vitality-like
+function Uranium.LoadLibrary(key)
+    local lib = Uranium.Libraries[key]
+    if not lib then return nil end
+    local ok, Lib = pcall(function()
+        return loadstring(game:HttpGet(lib.Url))()
+    end)
+    if not ok or not Lib then
+        return nil, lib.Name .. " no cargó (URL caída o bloqueada)"
     end
+    local okw, Window = pcall(function()
+        return Lib:Window({ Name = "Uranium" })
+    end)
+    if not okw or not Window then
+        return nil, lib.Name .. " no creó ventana (API incompatible)"
+    end
+    local okwm, Watermark
+    pcall(function()
+        Watermark = Lib.WatermarkObject or Lib:Watermark({ Name = "Uranium", SubName = "v" .. Uranium.Version })
+    end)
+    return {
+        Library = Lib,
+        Window = Window,
+        Watermark = Watermark,
+        Key = key,
+        Page = function(name) return Window:Page({ Name = name }) end,
+        Section = function(page, name, side) return page:Section({ Name = name, Side = side or 1 }) end,
+        Toggle = function(sec, name, def, flag, cb) return sec:Toggle({ Name = name, Flag = flag, Default = def, Callback = cb }) end,
+        Slider = function(sec, name, min, max, def, flag, cb) return sec:Slider({ Name = name, Flag = flag, Min = min, Max = max, Default = def, Callback = cb }) end,
+        Dropdown = function(sec, name, items, def, flag, cb) return sec:Dropdown({ Name = name, Flag = flag, Items = items, Default = def, Callback = cb }) end,
+        Button = function(sec, name, cb) return sec:Button({ Name = name, Callback = cb }) end,
+        Label = function(sec, text) return sec:Label({ Name = text }) end,
+        Keybind = function(sec, name, flag, cb) return sec:Keybind({ Name = name, Flag = flag, Callback = cb }) end,
+        Colorpicker = function(sec, flag, def, cb) return sec:Colorpicker({ Flag = flag, Default = def, Callback = cb }) end,
+    }
 end
-if not Uranium.Gui then
-    Uranium.Config.Gui = "vitality"
-    Uranium.Gui = Uranium.Libraries.vitality:Load()
-end
-
-local Gui = Uranium.Gui
 
 --=======================================================================
--- SOURCES — los módulos deobfuscados van aquí
--- cada uno: Uranium.RegisterSource(nombre, placeIds, funcion)
--- la funcion recibe el Uranium y arma sus propias páginas
+-- PREVIEW de estilos: mini ventana demo con las colors de cada GUI
 --=======================================================================
-Uranium.Sources = {}
+function Uranium.PreviewGui(key)
+    local lib = Uranium.Libraries[key]
+    if not lib then return end
+    local CoreGui = gethui and gethui() or game:GetService("CoreGui")
+    -- limpiar preview anterior
+    local old = CoreGui:FindFirstChild("UraniumPreview")
+    if old then old:Destroy() end
 
+    local SG = Instance.new("ScreenGui")
+    SG.Name = "UraniumPreview"
+    SG.ResetOnSpawn = false
+    SG.IgnoreGuiInset = true
+    pcall(function() SG.Parent = CoreGui end)
+
+    local Frame = Instance.new("Frame")
+    Frame.Name = "PreviewCard"
+    Frame.AnchorPoint = Vector2.new(0.5, 0.5)
+    Frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    Frame.Size = UDim2.new(0, 260, 0, 180)
+    Frame.BackgroundColor3 = lib.Bg
+    Frame.BorderSizePixel = 0
+    Frame.ClipsDescendants = true
+    Frame.Parent = SG
+    local Corner = Instance.new("UICorner")
+    Corner.CornerRadius = UDim.new(0, 10)
+    Corner.Parent = Frame
+    local Stroke = Instance.new("UIStroke")
+    Stroke.Color = lib.Accent
+    Stroke.Thickness = 1.5
+    Stroke.Transparency = 0.2
+    Stroke.Parent = Frame
+
+    local Title = Instance.new("TextLabel")
+    Title.BackgroundTransparency = 1
+    Title.Position = UDim2.new(0, 12, 0, 8)
+    Title.Size = UDim2.new(1, -24, 0, 24)
+    Title.Font = Enum.Font.GothamBold
+    Title.Text = lib.Name .. " — Uranium"
+    Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Title.TextSize = 15
+    Title.TextXAlignment = Enum.TextXAlignment.Left
+    Title.Parent = Frame
+
+    -- mini toggle demo
+    local tog = Instance.new("TextButton")
+    tog.Name = "DemoToggle"
+    tog.Position = UDim2.new(0, 12, 0, 44)
+    tog.Size = UDim2.new(1, -24, 0, 28)
+    tog.BackgroundColor3 = lib.Accent
+    tog.BorderSizePixel = 0
+    tog.Text = "  Uranium Blox Fruits"
+    tog.Font = Enum.Font.Gotham
+    tog.TextSize = 12
+    tog.TextXAlignment = Enum.TextXAlignment.Left
+    tog.TextColor3 = Color3.fromRGB(255, 255, 255)
+    tog.Parent = Frame
+    local c2 = Instance.new("UICorner") c2.CornerRadius = UDim.new(0, 6) c2.Parent = tog
+    local on = true
+    tog.MouseButton1Click:Connect(function()
+        on = not on
+        tog.BackgroundColor3 = on and lib.Accent or lib.Bg:Lerp(Color3.new(0,0,0), 0.3)
+    end)
+
+    -- mini slider demo
+    local slid = Instance.new("Frame")
+    slid.Position = UDim2.new(0, 12, 0, 82)
+    slid.Size = UDim2.new(1, -24, 0, 20)
+    slid.BackgroundColor3 = lib.Bg:Lerp(Color3.new(0,0,0), 0.4)
+    slid.BorderSizePixel = 0
+    slid.Parent = Frame
+    local c3 = Instance.new("UICorner") c3.CornerRadius = UDim.new(0, 6) c3.Parent = slid
+    local fill = Instance.new("Frame")
+    fill.Size = UDim2.new(0.55, 0, 1, 0)
+    fill.BackgroundColor3 = lib.Accent
+    fill.BorderSizePixel = 0
+    fill.Parent = slid
+    local c4 = Instance.new("UICorner") c4.CornerRadius = UDim.new(0, 6) c4.Parent = fill
+    local sTxt = Instance.new("TextLabel")
+    sTxt.BackgroundTransparency = 1
+    sTxt.Size = UDim2.new(1, 0, 1, 0)
+    sTxt.Font = Enum.Font.Gotham
+    sTxt.TextSize = 11
+    sTxt.Text = "  Bring Radius: 550 studs"
+    sTxt.TextColor3 = Color3.fromRGB(255, 255, 255)
+    sTxt.TextXAlignment = Enum.TextXAlignment.Left
+    sTxt.Parent = slid
+
+    -- botones aplicar / cerrar
+    local apply = Instance.new("TextButton")
+    apply.Position = UDim2.new(0, 12, 0, 112)
+    apply.Size = UDim2.new(0.5, -15, 0, 26)
+    apply.BackgroundColor3 = lib.Accent
+    apply.BorderSizePixel = 0
+    apply.Font = Enum.Font.GothamBold
+    apply.Text = "Aplicar"
+    apply.TextSize = 12
+    apply.TextColor3 = Color3.fromRGB(255, 255, 255)
+    apply.Parent = Frame
+    local c5 = Instance.new("UICorner") c5.CornerRadius = UDim.new(0, 6) c5.Parent = apply
+    apply.MouseButton1Click:Connect(function()
+        SG:Destroy()
+        Uranium.SetGui(key)
+    end)
+
+    local close = Instance.new("TextButton")
+    close.Position = UDim2.new(0.5, 3, 0, 112)
+    close.Size = UDim2.new(0.5, -15, 0, 26)
+    close.BackgroundColor3 = lib.Bg:Lerp(Color3.new(0,0,0), 0.5)
+    close.BorderSizePixel = 0
+    close.Font = Enum.Font.GothamBold
+    close.Text = "Cerrar"
+    close.TextSize = 12
+    close.TextColor3 = Color3.fromRGB(255, 255, 255)
+    close.Parent = Frame
+    local c6 = Instance.new("UICorner") c6.CornerRadius = UDim.new(0, 6) c6.Parent = close
+    close.MouseButton1Click:Connect(function() SG:Destroy() end)
+
+    local note = Instance.new("TextLabel")
+    note.BackgroundTransparency = 1
+    note.Position = UDim2.new(0, 12, 0, 144)
+    note.Size = UDim2.new(1, -24, 0, 28)
+    note.Font = Enum.Font.Gotham
+    note.TextSize = 10
+    note.Text = "Preview del estilo " .. lib.Name .. ".\nAplicar reconstruye el hub con esta interfaz."
+    note.TextColor3 = Color3.fromRGB(180, 180, 190)
+    note.TextWrapped = true
+    note.Parent = Frame
+
+    -- auto-cerrar en 30s
+    task.delay(30, function()
+        if SG and SG.Parent then SG:Destroy() end
+    end)
+end
+
+--=======================================================================
+-- REGISTRO DE SOURCES
+--=======================================================================
 function Uranium.RegisterSource(Name, PlaceIds, Func)
     table.insert(Uranium.Sources, { Name = Name, PlaceIds = PlaceIds, Func = Func, Supported = false })
 end
 
 function Uranium.Notify(Title, Desc, Time)
-    if Gui.Library and Gui.Library.Notification then
-        Gui.Library:Notification({ Name = Title, Description = Desc, Time = Time or 5 })
+    if Uranium.Gui and Uranium.Gui.Library and Uranium.Gui.Library.Notification then
+        pcall(function()
+            Uranium.Gui.Library:Notification({ Name = Title, Description = Desc, Time = Time or 5 })
+        end)
     else
-        game:GetService("StarterGui"):SetCore("SendNotification", { Title = Title, Text = Desc or "", Duration = Time or 5 })
+        pcall(function()
+            game:GetService("StarterGui"):SetCore("SendNotification", { Title = Title, Text = Desc or "", Duration = Time or 5 })
+        end)
     end
 end
 
 --=======================================================================
--- PÁGINA SETTINGS (común a todos los juegos)
+-- CONSTRUCCIÓN DEL HUB (reconstruible en runtime)
 --=======================================================================
-local SettingsPage = Gui.Page("Settings")
-local SettingsSection = Gui.Section(SettingsPage, "GUI", 1)
+local Building = false
 
-Gui.Label(SettingsSection, "Cambiar la interfaz del hub.\nSe aplica al reiniciar el script.")
+function Uranium.SetGui(key)
+    if Building then return end
+    if not Uranium.Libraries[key] then return end
+    Building = true
 
-local GuiNames = {}
-for key, lib in pairs(Uranium.Libraries) do
-    table.insert(GuiNames, lib.Name)
-end
-table.sort(GuiNames)
+    -- guardar elección
+    writefile(`{Uranium.Directory}/gui.txt`, key)
+    Uranium.Config.Gui = key
 
-local function KeyFromName(name)
-    for k, l in pairs(Uranium.Libraries) do
-        if l.Name == name then return k end
-    end
-end
-
-Gui.Dropdown(SettingsSection, "Interfaz", GuiNames, Uranium.Libraries[Uranium.Config.Gui].Name, "uranium_gui_select", function(Value)
-    local key = KeyFromName(Value)
-    if key then
-        writefile(`{Uranium.Directory}/gui.txt`, key)
-        Uranium.Notify("Uranium", `GUI cambiada a {Value}.\nRe-ejecuta el script para aplicarla.`, 5)
-    end
-end)
-
-Gui.Button(SettingsSection, "Re-Ejecutar Uranium", function()
-    if queue_on_teleport then queue_on_teleport(`loadstring(readfile("{Uranium.Directory}/Uranium.lua"))()`) end
-    if shared.UraniumReload and hookmetamethod then
-        -- cheat-style: recargar via namecall no es seguro; usar getgenv flag
-    end
-    getgenv().UraniumReloading = true
-    Uranium.Notify("Uranium", "Re-ejecuta el loader del hub para aplicar cambios.", 4)
-end)
-
---=======================================================================
--- EJECUCIÓN DE SOURCES
---=======================================================================
-local PlaceId = game.PlaceId
-for _, Source in ipairs(Uranium.Sources) do
-    if table.find(Source.PlaceIds, PlaceId) then
-        Source.Supported = true
-        local ok, err = pcall(Source.Func, Uranium)
-        if not ok then
-            warn(`[Uranium] source {Source.Name} failed: {err}`)
-            Uranium.Notify("Uranium", `El módulo {Source.Name} falló al cargar.`, 8)
+    -- destruir GUI anterior
+    if Uranium.Gui then
+        pcall(function()
+            if Uranium.Gui.Watermark and Uranium.Gui.Watermark.Remove then Uranium.Gui.Watermark:Remove() end
+        end)
+        pcall(function()
+            if Uranium.Gui.Window and Uranium.Gui.Window.Remove then Uranium.Gui.Window:Remove() end
+        end)
+        local CoreGui = gethui and gethui() or game:GetService("CoreGui")
+        -- matar screens uranium huérfanos
+        for _, v in ipairs(CoreGui:GetChildren()) do
+            if v.Name:find("Uranium") or v.Name == "Vitality" or v.Name == "Watermark" then
+                pcall(function() v:Destroy() end)
+            end
         end
     end
+
+    -- cargar nueva
+    local gui, err = Uranium.LoadLibrary(key)
+    if not gui then
+        Building = false
+        Uranium.Notify("Uranium", tostring(err) .. ".\nVolviendo a Vitality.", 7)
+        writefile(`{Uranium.Directory}/gui.txt`, "vitality")
+        gui = Uranium.LoadLibrary("vitality")
+        if not gui then return end
+    end
+
+    Uranium.Gui = gui
+    Building = false
+    Uranium.Build()
+    Uranium.Notify("Uranium", "Interfaz aplicada: " .. Uranium.Libraries[key].Name, 4)
 end
 
-if not next(Uranium.Sources) then
-    local MainPage = Gui.Page("Main")
-    local Sec = Gui.Section(MainPage, "Uranium", 1)
-    Gui.Label(Sec, "Uranium Hub v" .. Uranium.Version .. "\n\nNo hay módulos para este juego todavía.\nLos sources deobfuscados se registran aquí a medida que se consiguen.")
+function Uranium.Build()
+    local Gui = Uranium.Gui
+    if not Gui then return end
+
+    -- SETTINGS (siempre presentes)
+    local SettingsPage = Gui.Page("Settings")
+    local Sec = Gui.Section(SettingsPage, "Interfaz", 1)
+
+    Gui.Label(Sec, "Estilos disponibles. Preview muestra cómo se ve antes de aplicar.")
+
+    local names, keyOf = {}, {}
+    for k, l in pairs(Uranium.Libraries) do
+        table.insert(names, l.Name)
+        keyOf[l.Name] = k
+    end
+    table.sort(names)
+
+    local current = Uranium.Libraries[Uranium.Config.Gui] and Uranium.Libraries[Uranium.Config.Gui].Name or "Vitality"
+
+    Gui.Dropdown(Sec, "Estilo actual", names, current, "uranium_style", function(v)
+        -- solo informa; aplicar es con preview o botón
+    end)
+
+    for _, name in ipairs(names) do
+        local k = keyOf[name]
+        Gui.Button(Sec, "Preview: " .. name, function()
+            Uranium.PreviewGui(k)
+        end)
+    end
+
+    local SecR = Gui.Section(SettingsPage, "Uranium", 2)
+    Gui.Label(SecR, "Uranium Hub v" .. Uranium.Version .. "\nRepo: Korsac2026/12345\nSources deobfuscados en cada update.")
+    Gui.Button(SecR, "Recargar Hub (misma GUI)", function()
+        Uranium.Notify("Uranium", "Reconstruyendo...", 3)
+        Uranium.SetGui(Uranium.Config.Gui)
+    end)
+    Gui.Button(SecR, "Re-ejecutar Script Completo", function()
+        Uranium.Notify("Uranium", "Ejecuta el loader de nuevo desde tu executor.", 4)
+    end)
+
+    -- SOURCES
+    local PlaceId = game.PlaceId
+    local any = false
+    for _, Source in ipairs(Uranium.Sources) do
+        if table.find(Source.PlaceIds, PlaceId) then
+            any = true
+            local ok, err = pcall(Source.Func, Uranium)
+            if not ok then
+                warn(`[Uranium] source {Source.Name} failed: {err}`)
+            end
+        end
+    end
+
+    if not any then
+        local MainPage = Gui.Page("Main")
+        local MSec = Gui.Section(MainPage, "Uranium", 1)
+        Gui.Label(MSec, "Uranium Hub v" .. Uranium.Version .. "\n\nSin módulos para este juego aún.\nVe consiguiendo sources y se agregan aquí.")
+    end
 end
 
-Uranium.Notify("Uranium", "Hub cargado. v" .. Uranium.Version, 4)
+--=======================================================================
+-- SOURCES REGISTRADOS
+-- (módulos del repo; cada uno llama RegisterSource al cargar)
+--=======================================================================
+
+-- Blox Fruits
+Uranium.RegisterSource("Uranium Blox Fruits", { 2753915549, 4442272183, 7449423635 }, function(Uranium)
+    local Gui = Uranium.Gui
+    local Page = Gui.Page("Blox Fruits")
+    local Sec = Gui.Section(Page, "Uranium Blox Fruits", 1)
+
+    Gui.Dropdown(Sec, "Team", { "Pirates", "Marines" }, "Pirates", "uranium_bf_team", function(v)
+        getgenv().Team = v
+    end)
+    Gui.Toggle(Sec, "Auto Attack", true, "uranium_bf_autoattack", function(v)
+        getgenv().UraniumBF_AutoAttack = v
+    end)
+    Gui.Slider(Sec, "Fast Attack Delay", 0, 2, 0, "uranium_bf_delay", function(v)
+        getgenv().UraniumBF_Delay = v
+    end)
+    Gui.Toggle(Sec, "Attack Mobs", true, "uranium_bf_mobs", function(v)
+        getgenv().UraniumBF_Mobs = v
+    end)
+    Gui.Toggle(Sec, "Bring Monster", true, "uranium_bf_bring", function(v)
+        getgenv().UraniumBF_Bring = v
+    end)
+    Gui.Slider(Sec, "Bring Radius", 50, 1000, 250, "uranium_bf_radius", function(v)
+        getgenv().UraniumBF_Radius = v
+    end)
+
+    local Sec2 = Gui.Section(Page, "Script Completo", 2)
+    Gui.Button(Sec2, "Cargar desde Repo", function()
+        local url = `{REPO}/src/uranium/dumps/bloxfruits_deob.lua`
+        local ok, err = pcall(function()
+            loadstring(game:HttpGet(url))()
+        end)
+        if ok then
+            Uranium.Notify("Uranium", "Blox Fruits deobfuscado cargado.", 4)
+        else
+            Uranium.Notify("Uranium", "Error cargando: " .. tostring(err), 7)
+        end
+    end)
+    Gui.Button(Sec2, "Cargar desde Disco", function()
+        if isfile("uranium/dumps/bloxfruits_deob.lua") then
+            local ok, err = pcall(function()
+                loadstring(readfile("uranium/dumps/bloxfruits_deob.lua"))()
+            end)
+            if ok then
+                Uranium.Notify("Uranium", "Cargado desde disco.", 4)
+            else
+                Uranium.Notify("Uranium", "Error: " .. tostring(err), 7)
+            end
+        else
+            Uranium.Notify("Uranium", "No está en disco.\nPrimero baja el archivo (botón de la izquierda o desde el repo).", 6)
+        end
+    end)
+    Gui.Button(Sec2, "Descargar a Disco", function()
+        local url = `{REPO}/src/uranium/dumps/bloxfruits_deob.lua`
+        local ok, res = pcall(function()
+            return game:HttpGet(url, true)
+        end)
+        if ok and res and #res > 1000 then
+            if not isfolder("uranium/dumps") then makefolder("uranium/dumps") end
+            writefile("uranium/dumps/bloxfruits_deob.lua", res)
+            Uranium.Notify("Uranium", "Descargado a uranium/dumps/ (" .. #res .. " bytes).", 5)
+        else
+            Uranium.Notify("Uranium", "Descarga fallida.", 5)
+        end
+    end)
+end)
+
+--=======================================================================
+-- ARRANQUE
+--=======================================================================
+local gui, err = Uranium.LoadLibrary(Uranium.Config.Gui)
+if not gui then
+    Uranium.Notify("Uranium", (err or "GUI falló") .. " — usando Vitality.", 7)
+    gui = Uranium.LoadLibrary("vitality")
+end
+Uranium.Gui = gui
+Uranium.Build()
+
+Uranium.Notify("Uranium", "Hub cargado — v" .. Uranium.Version, 4)
 shared.Uranium = Uranium
 getgenv().Uranium = Uranium
 
