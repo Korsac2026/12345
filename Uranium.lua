@@ -288,14 +288,51 @@ function Uranium.Notify(Title, Desc, Time)
     end
 end
 
--- REBRAND sweeps (post-load, catches any "Vape"/"catvape" labels) -------
+-- REBRAND sweeps (post-load: text labels AND logo images) ----------------
 function Uranium.RebrandUI()
+    local LOGO_ASSETS = {
+        "126205920310261", -- vapelogo.png
+        "109041903452149", -- vapelogomini.png
+        "102549752760489", -- v4.png
+        "115213099001611", -- v4mini.png
+    }
+    local function isLogoImage(img)
+        if not img then return false end
+        for _, id in ipairs(LOGO_ASSETS) do
+            if img:find(id) then return true end
+        end
+        return false
+    end
+    local function replaceWithText(obj)
+        -- reemplaza ImageLabel del logo por TextLabel "URANIUM"
+        local parent = obj.Parent
+        if not parent then return end
+        local pos, size = obj.Position, obj.Size
+        local txt = Instance.new("TextLabel")
+        txt.BackgroundTransparency = 1
+        txt.Position = pos
+        txt.Size = size
+        txt.Font = Enum.Font.GothamBlack
+        txt.Text = "URANIUM"
+        txt.TextColor3 = Color3.fromRGB(255, 255, 255)
+        txt.TextScaled = true
+        txt.TextXAlignment = Enum.TextXAlignment.Left
+        txt.Name = "UraniumLogoText"
+        txt.Parent = parent
+        obj:Destroy()
+    end
     local function sweep()
         local renamed = 0
         pcall(function()
             local cg = gethui and gethui() or game:GetService("CoreGui")
             for _, root in ipairs(cg:GetChildren()) do
                 for _, v in ipairs(root:GetDescendants()) do
+                    -- logo images -> text
+                    if v:IsA("ImageLabel") and isLogoImage(v.Image) then
+                        replaceWithText(v)
+                        renamed = renamed + 1
+                    end
+                    -- text labels
                     if v:IsA("TextLabel") and v.Text then
                         local t = v.Text
                         if t:match("Vape") or t:match("vape") or t:match("VAPE") or t:match("catvape") or t:match("CatVape") or t:match("Catvape") then
@@ -305,7 +342,7 @@ function Uranium.RebrandUI()
                     end
                     if v:IsA("TextButton") and v.Text then
                         local t = v.Text
-                        if t:match("Vape") or t:match("vape") or t:match("VAPE") or t:match("catvape") or t:match("CatVape") then
+                        if t:match("Vape") or t:match("vape") or t:match("VAPE") or t:match("catvape") or t:match("CatVape") or t:match("Catvape") then
                             v.Text = t:gsub("VAPE", "Uranium"):gsub("Vape", "Uranium"):gsub("catvape", "Uranium"):gsub("CatVape", "Uranium"):gsub("Catvape", "Uranium"):gsub("vape", "Uranium")
                             renamed = renamed + 1
                         end
@@ -317,10 +354,11 @@ function Uranium.RebrandUI()
     end
     task.delay(2, function()
         local n = sweep()
-        if n > 0 then Uranium.Notify("Uranium", "Rebranded " .. n .. " labels to Uranium.", 3) end
+        if n > 0 then Uranium.Notify("Uranium", "Rebranded " .. n .. " elements to Uranium.", 3) end
     end)
     task.delay(5, function() sweep() end)
     task.delay(10, function() sweep() end)
+    task.delay(20, function() sweep() end)
 end
 
 -- SOURCES + DETECCION --------------------------------------------------
@@ -606,7 +644,7 @@ function Uranium.Build()
         Uranium.CloseHub()
         task.spawn(function() Uranium.ExecCatvape() end)
     end)
-    Gui.Button(AllSec, "Uranium Operation One (Astro)", function()
+    Gui.Button(AllSec, "Uranium Bedwars (Astro)", function()
         Uranium.CloseHub()
         task.spawn(function() Uranium.ExecOperationOne() end)
     end)
@@ -661,7 +699,7 @@ function Uranium.ExecOperationOne()
             game:GetService("StarterGui"):SetCore("SendNotification", { Title = t, Text = d or "", Duration = ti or 5 })
         end)
     end
-    note("Uranium", "Loading Uranium Operation One...", 4)
+    note("Uranium", "Loading Uranium Bedwars...", 4)
 
     -- 1) repo dump
     local ok, err = pcall(function()
@@ -737,14 +775,14 @@ Uranium.RegisterSource(
 )
 
 Uranium.RegisterSource(
-    "Uranium Operation One",
+    "Uranium Bedwars",
     { 253832, 6229116934 },
     function(Uranium)
         local Gui = Uranium.Gui
         local Page = Gui.Page("Operation One")
-        local Sec = Gui.Section(Page, "Uranium Operation One", 1)
+        local Sec = Gui.Section(Page, "Uranium Bedwars", 1)
         Gui.Label(Sec, "Astro/Operation One payload (deobfuscated).\nNo key system, no anti-tamper.\nRuns with its own GUI.")
-        Gui.Button(Sec, "Execute Uranium Operation One", function()
+        Gui.Button(Sec, "Execute Uranium Bedwars", function()
             Uranium.CloseHub()
             task.spawn(function() Uranium.ExecOperationOne() end)
         end)
