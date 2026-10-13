@@ -4026,14 +4026,14 @@ Restock: %s
 		PostWebhook(dataLogWebhookUrl, {
 			embeds = {
 				{
-					title = arg2 or "Quantum Onyx - Blox Fruit Data Log",
+					title = arg2 or "Uranium - Blox Fruit Data Log",
 					type = "rich",
 					color = 3066993,
 					fields = tbl9,
 					thumbnail = {
 						url = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. v18.UserId .. "&width=420&height=420&format=png",
 					},
-					footer = { text = "Quantum Onyx | " .. os.date("%X") },
+					footer = { text = "Uranium | " .. os.date("%X") },
 					timestamp = DateTime.now():ToIsoDate(),
 				},
 			},
@@ -5907,7 +5907,7 @@ Restock: %s
 		end
 
 		local v22 = lua4:CreateWindow({
-			Title = "Quantum Onyx",
+			Title = "Uranium",
 			Subtitle = "Blox Fruit",
 			Version = "v.Freemium",
 			Key = true,
@@ -7860,7 +7860,7 @@ Restock: %s
 
 		tbl19.SendDataLogNow = function()
 			if tbl2 and tbl2.Webhook and tbl2.Webhook.SendDataLog then
-				tbl2.Webhook:SendDataLog("Quantum Onyx - Manual Data Log Request", "Triggered manually via UI button.")
+				tbl2.Webhook:SendDataLog("Uranium - Manual Data Log Request", "Triggered manually via UI button.")
 			end
 
 			tbl6:SendNotify("Data Log", "Data Log webhook sent successfully!", 5)
@@ -9196,7 +9196,7 @@ Restock: %s
 				local lastDataLogTick = tbl2.Runtime.LastDataLogTick
 
 				if n4 <= tick() - lastDataLogTick then
-					tbl2.Webhook:SendDataLog("Quantum Onyx - Periodic Farm Data Log")
+					tbl2.Webhook:SendDataLog("Uranium - Periodic Farm Data Log")
 				end
 			end
 		end, true)
@@ -12222,10 +12222,10 @@ Restock: %s
 				return
 			end
 
-			local str5 = "Quantum Onyx Hub/" .. v18.Name .. "CyborgRace.json"
+			local str5 = "Uranium Hub/" .. v18.Name .. "CyborgRace.json"
 
-			if isfolder and makefolder and not isfolder("Quantum Onyx Hub") then
-				makefolder("Quantum Onyx Hub")
+			if isfolder and makefolder and not isfolder("Uranium Hub") then
+				makefolder("Uranium Hub")
 			end
 
 			local v22 = isfile and isfile(str5)
@@ -14138,7 +14138,7 @@ Restock: %s
 			v22(tbl6, ...)
 		end
 
-		print(string.format("[Quantum Onyx] %s initialized in %.4fs", arg, tick() - now))
+		print(string.format("[Uranium] %s initialized in %.4fs", arg, tick() - now))
 	end
 
 	fn27("CoreSetup")
@@ -14150,7 +14150,7 @@ Restock: %s
 		task.wait(1.5)
 		tbl6:SendNotify("Quantum Fully Loaded", "All Functions, Modules, Dependencies, Successfully loaded.", 8)
 		task.wait(1)
-		tbl6:SendNotify("Quantum (INFO)", "Quantum Onyx Script is 100% Free and Keyless", 8)
+		tbl6:SendNotify("Quantum (INFO)", "Uranium Script is 100% Free and Keyless", 8)
 
 		pcall(function()
 			loadstring(game:HttpGet("https://raw.githubusercontent.com/flazhy/QuantumOnyx/refs/heads/main/Util/BloxFruitModule/Preload/Weebo.lua"))()
