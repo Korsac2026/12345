@@ -2,7 +2,7 @@ local vape = shared.vape
 local loadstring = function(...)
     local Chunk, Error = loadstring(...)
     if Error and vape then
-        vape:CreateNotification("Vape", `Failed to load : {Error}`, 30, "alert")
+        vape:CreateNotification("Uranium", `Failed to load : {Error}`, 30, "alert")
     end
     return Chunk
 end
@@ -191,7 +191,7 @@ local function HopServer(Pointer: string?, Filter: string)
         table.insert(Visited, game.JobId)
     end
     if not Pointer then
-        SendNotification("Vape", "Searching for an available server.", 2)
+        SendNotification("Uranium", "Searching for an available server.", 2)
     end
 
     local Success, HttpData = pcall(function()
@@ -204,7 +204,7 @@ local function HopServer(Pointer: string?, Filter: string)
                 CacheExpire, Cache = tick() + 60, HttpData
                 table.insert(Attempted, v.id)
 
-                SendNotification("Vape", "Found! Teleporting.", 5)
+                SendNotification("Uranium", "Found! Teleporting.", 5)
                 SafeTeleport(game.PlaceId, v.id)
                 return
             end
@@ -213,10 +213,10 @@ local function HopServer(Pointer: string?, Filter: string)
         if Data.nextPageCursor then
             HopServer(Data.nextPageCursor, Filter)
         else
-            SendNotification("Vape", "Failed to find an available server.", 5, "warning")
+            SendNotification("Uranium", "Failed to find an available server.", 5, "warning")
         end
     else
-        SendNotification("Vape", `Failed to grab servers. ({Data and Data.errors[1].message or "no data"})`, 5, "warning")
+        SendNotification("Uranium", `Failed to grab servers. ({Data and Data.errors[1].message or "no data"})`, 5, "warning")
     end
 end
 
@@ -517,7 +517,7 @@ Run(function()
             if self.localprio == 0 then
                 OldUninject = vape.Uninject
                 vape.Uninject = function()
-                    SendNotification("Vape", "No escaping the private members :)", 10)
+                    SendNotification("Uranium", "No escaping the private members :)", 10)
                 end
             end
         end
@@ -9933,7 +9933,7 @@ Run(function()
 	    end
 	
 	    if Applied > 0 then
-	        SendNotification("Vape", `Applied {Applied} fflag{Applied == 1 and "" or "s"}, join a new game for them to take effect`, 12, "info")
+	        SendNotification("Uranium", `Applied {Applied} fflag{Applied == 1 and "" or "s"}, join a new game for them to take effect`, 12, "info")
 	    end
 	end
 	
@@ -9944,7 +9944,7 @@ Run(function()
 	    end)
 	
 	    if not Success or typeof(Json) ~= "table" then
-	        SendNotification("Vape", `{Source} is not valid fflag json`, 12, "warning")
+	        SendNotification("Uranium", `{Source} is not valid fflag json`, 12, "warning")
 	        return
 	    end
 	
@@ -9968,7 +9968,7 @@ Run(function()
 	    end
 	
 	    List:ChangeValue()
-	    SendNotification("Vape", `Took {AddedCount} fflag{AddedCount == 1 and "" or "s"} from {Source}{DroppedCount > 0 and `, dropped {DroppedCount} it did not recognise` or ""}`, 12, AddedCount > 0 and "info" or "warning")
+	    SendNotification("Uranium", `Took {AddedCount} fflag{AddedCount == 1 and "" or "s"} from {Source}{DroppedCount > 0 and `, dropped {DroppedCount} it did not recognise` or ""}`, 12, AddedCount > 0 and "info" or "warning")
 	end
 	
 	FFlag = vape.Legit:CreateModule({
@@ -9979,7 +9979,7 @@ Run(function()
 	        if Callback then
 	            Apply()
 	        else
-	            SendNotification("Vape", "Inorder to disable fflags you have applied, You need to restart roblox", 20, "info")
+	            SendNotification("Uranium", "Inorder to disable fflags you have applied, You need to restart roblox", 20, "info")
 	        end
 	    end
 	})
@@ -10003,7 +10003,7 @@ Run(function()
 	    Name = "Import from file",
 	    Function = function()
 	        if not isfile(`{vape.Directory}/fflags.json`) then
-	            SendNotification("Vape", `No {vape.Directory}/fflags.json to read`, 12, "warning")
+	            SendNotification("Uranium", `No {vape.Directory}/fflags.json to read`, 12, "warning")
 	            return
 	        end
 	
@@ -10036,7 +10036,7 @@ Run(function()
 	            setclipboard(Copied)
 	        end
 	
-	        SendNotification("Vape", Packed and `Wrote {vape.Directory}/fflags.json and copied {#Copied} characters to your clipboard, {math.floor(#Copied / #Plain * 100)}% of the raw json` or `Wrote {vape.Directory}/fflags.json and copied the raw json, packing it did not read back so it was left alone`, 12, Packed and "info" or "warning")
+	        SendNotification("Uranium", Packed and `Wrote {vape.Directory}/fflags.json and copied {#Copied} characters to your clipboard, {math.floor(#Copied / #Plain * 100)}% of the raw json` or `Wrote {vape.Directory}/fflags.json and copied the raw json, packing it did not read back so it was left alone`, 12, Packed and "info" or "warning")
 	    end
 	})
 	FFlag:CreateButton({
@@ -10045,7 +10045,7 @@ Run(function()
 	        table.clear(List.List)
 	        table.clear(List.ListEnabled)
 	        List:ChangeValue()
-	        SendNotification("Vape", "Cleared the list, restart roblox to drop the flags already applied", 20, "info")
+	        SendNotification("Uranium", "Cleared the list, restart roblox to drop the flags already applied", 20, "info")
 	    end
 	})
 end)

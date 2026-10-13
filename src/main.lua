@@ -72,7 +72,7 @@ local vape, RunPremium
 local loadstring = function(...)
     local Chunk, Error = loadstring(...)
     if Error and vape then
-        vape:CreateNotification("Vape", `Failed to load : {Error}`, 30, "alert")
+        vape:CreateNotification("Uranium", `Failed to load : {Error}`, 30, "alert")
     end
     return Chunk
 end

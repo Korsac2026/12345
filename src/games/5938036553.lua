@@ -2,7 +2,7 @@ local vape = shared.vape
 local loadstring = function(...)
     local Chunk, Message = loadstring(...)
     if Message and vape then
-        vape:CreateNotification("Vape", `Failed to load : {Message}`, 30, "alert")
+        vape:CreateNotification("Uranium", `Failed to load : {Message}`, 30, "alert")
     end
     return Chunk
 end
@@ -86,11 +86,11 @@ if not select(1, ...) and game.PlaceId == 5938036553 then
                     return
                 end
             end
-            SendNotification("Vape", "Failed to find actor", 10, "alert")
+            SendNotification("Uranium", "Failed to find actor", 10, "alert")
         end)
     else
         vape.Load = function()
-            SendNotification("Vape", "Missing actor functions.", 10, "alert")
+            SendNotification("Uranium", "Missing actor functions.", 10, "alert")
         end
     end
 
@@ -150,7 +150,7 @@ local function HookEvent(Id: string, Handler)
     end)
 
     if not Success then
-        SendNotification("Vape", `Failed to hook ({Id})`, 10, "alert")
+        SendNotification("Uranium", `Failed to hook ({Id})`, 10, "alert")
     end
 
     return type(Result) == "function" and Result or function() end

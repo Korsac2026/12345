@@ -105,7 +105,7 @@ local function MountWindows(Budget: number?)
         if Entry.Build then
             local Success, Error = pcall(Entry.Build)
             if not Success then
-                warn(`[catvape] failed to build a staged window: {Error}`)
+                warn(`[Uranium] failed to build a staged window: {Error}`)
             end
         else
             pcall(function()
@@ -158,7 +158,7 @@ local function AttemptLoad(Object, Data, Name: string)
     local Success, Error = pcall(Object.Load, Object, Data)
     if not Success then
         LoadFailures += 1
-        warn(`[catvape] failed to load {Name}: {Error}`)
+        warn(`[Uranium] failed to load {Name}: {Error}`)
     end
 end
 
@@ -1694,7 +1694,7 @@ function vape:UpdateVapeButton()
     if not Button or not Button.Parent then return end
 
     local MenuOpen: boolean = ClickGUI.Visible or (self.Legit and self.Legit.Window.Visible) or (self.PublicProfiles and self.PublicProfiles.Window.Visible) or false
-    local Hide: boolean = not MenuOpen and self.Settings.GUI.Options["Hide CatVape Button"].Enabled
+    local Hide: boolean = not MenuOpen and self.Settings.GUI.Options["Hide Uranium Button"].Enabled
     Button.BackgroundTransparency = Hide and 1 or 0.08
     Button.Icon.ImageTransparency = Hide and 1 or 0
 end
@@ -2159,7 +2159,7 @@ function vape:Load(SkipGui: boolean?, Profile: string?)
 
     if not Success then
         CanSave = false
-        warn(`[catvape] failed to load the {self.Profile} profile: {Error}`)
+        warn(`[Uranium] failed to load the {self.Profile} profile: {Error}`)
         self:CreateNotification("Vape", `Failed to load {self.Profile} profile, saving is off until you fix or delete it`, 15, "alert")
     end
 
@@ -2310,7 +2310,7 @@ local function DeferLoad(Callback: () -> ())
         local Failures: number = LoadFailures
         local Success, Error = pcall(Callback)
         if not Success then
-            warn(`[catvape] failed to run deferred load: {Error}`)
+            warn(`[Uranium] failed to run deferred load: {Error}`)
         end
 
         SaveDefaults(true, Existing)
@@ -2334,7 +2334,7 @@ local function DeferLoad(Callback: () -> ())
         end)
 
         if not Success then
-            warn(`[catvape] failed to load deferred settings: {Error}`)
+            warn(`[Uranium] failed to load deferred settings: {Error}`)
         end
 
         if LoadFailures > Failures then
@@ -2399,7 +2399,7 @@ function vape:LoadGUI()
 	ScarcityBanner.FontFace = UIPallet.Font
 	ScarcityBanner.Position = UDim2.fromScale(0, 0.8)
 	ScarcityBanner.Size = UDim2.fromScale(1, 0.022)
-	ScarcityBanner.Text = "Thank you for choosing catvape - catvape.dev"
+	ScarcityBanner.Text = "Thank you for choosing Uranium - Uranium Hub"
 	ScarcityBanner.TextColor3 = Color3.new(1, 1, 1)
 	ScarcityBanner.TextScaled = true
 	ScarcityBanner.TextStrokeTransparency = 0.5
@@ -2896,7 +2896,7 @@ function vape:LoadGUI()
 	
 	if not UserInputService.KeyboardEnabled or UserInputService.TouchEnabled or shared.VapeDeveloper then
 	    local HideButton = GUIPane:CreateToggle({
-	        Name = "Hide CatVape Button",
+	        Name = "Hide Uranium Button",
 	        Default = isfile(`{vape.Directory}/profiles/hidebuttonv3.txt`) and readfile(`{vape.Directory}/profiles/hidebuttonv3.txt`) == "true",
 	        Function = function(Enabled: boolean)
 	            vape:UpdateVapeButton()
@@ -4396,7 +4396,7 @@ function vape:ImportConfig(Text: string)
         end)
 
         if not Success or not Unpacked then
-            return false, "that text is not a catvape config"
+            return false, "that text is not a Uranium config"
         end
 
         Text = Unpacked
@@ -4404,7 +4404,7 @@ function vape:ImportConfig(Text: string)
 
     local Success, Blob = pcall(HttpService.JSONDecode, HttpService, Text)
     if not Success or typeof(Blob) ~= "table" or typeof(Blob.Main) ~= "table" then
-        return false, "that text is not a catvape config"
+        return false, "that text is not a Uranium config"
     end
 
     if Blob.Place and Blob.Place ~= self.Place then
@@ -10015,7 +10015,7 @@ Components = {
 		        end, self.Enabled)
 		
 		        if not Success then
-		            warn(`[catvape] {Props.Name} errored turning {self.Enabled and "on" or "off"} : {Error}`)
+		            warn(`[Uranium] {Props.Name} errored turning {self.Enabled and "on" or "off"} : {Error}`)
 		            vape:CreateNotification("Vape", `{Props.Name} errored, check your console`, 10, "alert")
 		        end
 		    end)
@@ -11087,7 +11087,7 @@ Components = {
 		        end, self.Enabled)
 		
 		        if not Success then
-		            warn(`[catvape] {Props.Name} errored turning {self.Enabled and "on" or "off"} : {Error}`)
+		            warn(`[Uranium] {Props.Name} errored turning {self.Enabled and "on" or "off"} : {Error}`)
 		            vape:CreateNotification("Vape", `{Props.Name} errored, check your console`, 10, "alert")
 		        end
 		    end)
@@ -13891,7 +13891,7 @@ Components = {
 		    VersionLabel.Name = "Version"
 		    VersionLabel.Position = UDim2.new(0, 0, 1, -16)
 		    VersionLabel.Size = UDim2.new(1, 0, 0, 16)
-		    VersionLabel.Text = `Vape {vape.Version} {isfile(`{vape.Directory}/profiles/commit.txt`) and readfile(`{vape.Directory}/profiles/commit.txt`):sub(1, 6) or ""} `
+		    VersionLabel.Text = `URANIUM {vape.Version} {isfile(`{vape.Directory}/profiles/commit.txt`) and readfile(`{vape.Directory}/profiles/commit.txt`):sub(1, 6) or ""} `
 		    VersionLabel.TextColor3 = Color.Dark(UIPallet.Text, 0.43)
 		    VersionLabel.TextSize = 10
 		    VersionLabel.TextXAlignment = Enum.TextXAlignment.Right

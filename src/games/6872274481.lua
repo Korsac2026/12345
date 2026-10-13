@@ -2,7 +2,7 @@ local vape = shared.vape
 local loadstring = function(...)
     local Chunk, Message = loadstring(...)
     if Message and vape then
-        vape:CreateNotification("Vape", `Failed to load : {Message}`, 30, "alert")
+        vape:CreateNotification("Uranium", `Failed to load : {Message}`, 30, "alert")
     end
     return Chunk
 end
@@ -32,7 +32,7 @@ vape.Libraries.swordtiming = loadstring(DownloadFile(`{vape.Directory}/libraries
 local Run = function(Func: () -> ())
     xpcall(Func, function(Message)
         task.spawn(error, Message)
-        vape:CreateNotification("Vape", `A module failed to load: {Message}`, 15, "alert")
+        vape:CreateNotification("Uranium", `A module failed to load: {Message}`, 15, "alert")
     end)
 
     vape.YieldBuild()

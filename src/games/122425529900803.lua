@@ -102,7 +102,7 @@ Run(function()
         if v.Function and debug.getinfo(v.Function, "s").short_src:find("RuntimeDiagnostics") then
             Reporter = debug.getupvalue(v.Function, 1)
             Old = hookfunction(Reporter, function()
-                vape:CreateNotification("Vape", "Blocked a detection attempt.", 7, "alert")
+                vape:CreateNotification("Uranium", "Blocked a detection attempt.", 7, "alert")
             end)
             break
         end

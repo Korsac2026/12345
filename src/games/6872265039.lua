@@ -5,7 +5,7 @@ local Run = function(Func: () -> ())
     xpcall(Func, function(Message)
         warn(`[catvape] {Message}\n{debug.traceback(nil, 2)}`)
         if shared.vape then
-            shared.vape:CreateNotification("Vape", `A module failed to load : {Message}`, 15, "alert")
+            shared.vape:CreateNotification("Uranium", `A module failed to load : {Message}`, 15, "alert")
         end
     end)
 

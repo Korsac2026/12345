@@ -2,7 +2,7 @@ local vape = shared.vape
 local loadstring = function(...)
     local Chunk, Message = loadstring(...)
     if Message and vape then
-        vape:CreateNotification("Vape", `Failed to load : {Message}`, 30, "alert")
+        vape:CreateNotification("Uranium", `Failed to load : {Message}`, 30, "alert")
     end
     return Chunk
 end
@@ -232,7 +232,7 @@ if not select(1, ...) then
         end)
     else
         vape.Load = function()
-            SendNotification("Vape", "Missing actor functions.", 10, "alert")
+            SendNotification("Uranium", "Missing actor functions.", 10, "alert")
         end
     end
 
