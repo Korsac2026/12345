@@ -1,4 +1,4 @@
---=======================================================================
+﻿--=======================================================================
 -- URANIUM HUB v2.6
 -- - Auto-detection: popup "Yes" actually EXECUTES the script and closes hub
 -- - Popup styled to match active GUI library
@@ -644,7 +644,7 @@ function Uranium.Build()
         Uranium.CloseHub()
         task.spawn(function() Uranium.ExecCatvape() end)
     end)
-    Gui.Button(AllSec, "Uranium Bedwars (Astro)", function()
+    Gui.Button(AllSec, "Uranium Operation One (Astro)", function()
         Uranium.CloseHub()
         task.spawn(function() Uranium.ExecOperationOne() end)
     end)
@@ -699,7 +699,7 @@ function Uranium.ExecOperationOne()
             game:GetService("StarterGui"):SetCore("SendNotification", { Title = t, Text = d or "", Duration = ti or 5 })
         end)
     end
-    note("Uranium", "Loading Uranium Bedwars...", 4)
+    note("Uranium", "Loading Uranium Operation One...", 4)
 
     -- 1) repo dump
     local ok, err = pcall(function()
@@ -775,14 +775,14 @@ Uranium.RegisterSource(
 )
 
 Uranium.RegisterSource(
-    "Uranium Bedwars",
+    "Uranium Operation One",
     { 253832, 6229116934 },
     function(Uranium)
         local Gui = Uranium.Gui
         local Page = Gui.Page("Operation One")
-        local Sec = Gui.Section(Page, "Uranium Bedwars", 1)
+        local Sec = Gui.Section(Page, "Uranium Operation One", 1)
         Gui.Label(Sec, "Astro/Operation One payload (deobfuscated).\nNo key system, no anti-tamper.\nRuns with its own GUI.")
-        Gui.Button(Sec, "Execute Uranium Bedwars", function()
+        Gui.Button(Sec, "Execute Uranium Operation One", function()
             Uranium.CloseHub()
             task.spawn(function() Uranium.ExecOperationOne() end)
         end)

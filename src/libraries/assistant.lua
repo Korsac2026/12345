@@ -879,11 +879,11 @@ local WriteJSON = Interface.WriteJSON
 
         AddPlace({
             Id = "gui",
-            Aliases = {"menu", "main menu", "main window", "clickgui", "click gui", "uranium", "uranium", "Uranium menu", "vape menu"},
+            Aliases = {"menu", "main menu", "main window", "clickgui", "click gui", "Uranium", "vape", "Uranium menu", "vape menu"},
             Label = "GUI",
             Name = "the GUI",
             Keywords = "main window menu clickgui Uranium vape click",
-            Hint = "This is the main Uranium window.",
+            Hint = "This is the main CatVape window.",
             Target = function()
                 OpenGUI()
                 return Main.Object
@@ -1270,7 +1270,7 @@ local WriteJSON = Interface.WriteJSON
             Place = "gui",
             Answer = function()
                 if IsMobile() then
-                    return `Tap the Uranium button at the top of your screen to open or close the GUI. If you turned on {Accent("Hide Uranium Button")}, it is still there, just invisible, so tap the same spot.`
+                    return `Tap the CatVape button at the top of your screen to open or close the GUI. If you turned on {Accent("Hide CatVape Button")}, it is still there, just invisible, so tap the same spot.`
                 end
 
                 return `Press {Accent(GetKeys(vape.GUIBind.Keys) or "RightShift")} to open or close the GUI. You can change that key with {Accent("Rebind GUI")} in the settings, which open from the gear on the main window.`
@@ -1335,14 +1335,14 @@ local WriteJSON = Interface.WriteJSON
             Keywords = "reset default defaults restore wipe fresh config profile",
             Place = "reset current profile",
             Answer = function()
-                return `Open {Accent("Profiles")}, click its gear and press {Accent("Reset current profile")}. That puts the profile you are on back to the defaults and reloads Uranium. If a window just went off screen, use {Accent("Reset GUI positions")} in the GUI settings instead.`
+                return `Open {Accent("Profiles")}, click its gear and press {Accent("Reset current profile")}. That puts the profile you are on back to the defaults and reloads CatVape. If a window just went off screen, use {Accent("Reset GUI positions")} in the GUI settings instead.`
             end
         },
         {
             Keywords = "save saving saved autosave persist sync",
             Place = "sync to current profile",
             Answer = function()
-                return `Uranium saves by itself whenever you change something, into the profile you are on. {Accent("Sync to current profile")} in the Profiles gear forces a save right away.`
+                return `CatVape saves by itself whenever you change something, into the profile you are on. {Accent("Sync to current profile")} in the Profiles gear forces a save right away.`
             end
         },
         {
@@ -1447,13 +1447,13 @@ local WriteJSON = Interface.WriteJSON
             Keywords = "uninject unload destruct self exit quit reload reinject restart",
             Place = "self destruct",
             Answer = function()
-                return `{Accent("Self destruct")} in the General settings removes Uranium from this game, and {Accent("Reinject")} next to it loads it again.`
+                return `{Accent("Self destruct")} in the General settings removes CatVape from this game, and {Accent("Reinject")} next to it loads it again.`
             end
         },
         {
             Keywords = "update updates updating version outdated newest",
             Answer = function()
-                return `Uranium checks for a new version every time you execute it and downloads it by itself, so just execute it again. Ask me "what's new" to see what changed.`
+                return `CatVape checks for a new version every time you execute it and downloads it by itself, so just execute it again. Ask me "what's new" to see what changed.`
             end
         },
         {
@@ -1494,7 +1494,7 @@ local WriteJSON = Interface.WriteJSON
             Keywords = "paid premium buy purchase price cost license",
             Place = "discord",
             Answer = function()
-                return "Modules tagged PAID are part of Uranium premium. The Discord has everything about getting it, the icon on the main window copies the invite."
+                return "Modules tagged PAID are part of CatVape premium. The Discord has everything about getting it, the icon on the main window copies the invite."
             end
         },
         {
@@ -1507,7 +1507,7 @@ local WriteJSON = Interface.WriteJSON
         {
             Keywords = "mobile phone ipad tablet touch tap android ios",
             Answer = function()
-                return "Tap the Uranium button at the top of your screen to open the GUI. Hold a module for a second, then tap anywhere to place a button for it. Tap that button to toggle the module and hold it for a second to remove it."
+                return "Tap the CatVape button at the top of your screen to open the GUI. Hold a module for a second, then tap anywhere to place a button for it. Tap that button to toggle the module and hold it for a second to remove it."
             end
         }
     }
@@ -1561,7 +1561,7 @@ local WriteJSON = Interface.WriteJSON
             Modules = {"Killaura", "Reach", "HitBoxes", "SilentAura", "AutoWin"},
             Options = {"Attack range", "Swing range", "Sword reach"},
             Keywords = "sword swords reach range hit hits attack attacks melee swing swings aura normal legit far distance studs miss misses missing land lands register hitreg best max axe battle hammer weapon weapons",
-            Text = "A normal swing reaches about 11.4 studs in front of you, and 14.4 when your cursor is right on the enemy. The game refuses hits from much past the weapon's range, and in Uranium's tests Killaura with Attack range 18 landed hits out to about 17.5 studs, so going above 18 does not help. A few weapons have their own range, like the battle axe (21) and the diamond great hammer (15)."
+            Text = "A normal swing reaches about 11.4 studs in front of you, and 14.4 when your cursor is right on the enemy. The game refuses hits from much past the weapon's range, and in CatVape's tests Killaura with Attack range 18 landed hits out to about 17.5 studs, so going above 18 does not help. A few weapons have their own range, like the battle axe (21) and the diamond great hammer (15)."
         },
         {
             Game = "BedWars",
@@ -1628,7 +1628,7 @@ local WriteJSON = Interface.WriteJSON
             Game = "BedWars",
             Modules = {"AutoReset"},
             Keywords = "respawn respawns respawning timer time long wait death die dies dead final kill bedless eliminated",
-            Text = "After a normal death you respawn in about 3.6 seconds, going by the matches Uranium measured. Once your bed is gone your next death is final. Players who were already dead when their bed broke still respawn one more time."
+            Text = "After a normal death you respawn in about 3.6 seconds, going by the matches CatVape measured. Once your bed is gone your next death is final. Players who were already dead when their bed broke still respawn one more time."
         },
         {
             Game = "BedWars",
@@ -1641,7 +1641,7 @@ local WriteJSON = Interface.WriteJSON
             Modules = {"Speed", "Fly", "AutoWin", "LongJump"},
             Accent = {"Move boost"},
             Keywords = "anticheat flag flagged flagging flags detect detected detection detectable bannable ban bans banned lagback lagbacks lagbacked rubberband rubberbanding speed fast faster horizontal vertical sideways teleport teleporting safe limit",
-            Text = "The anticheat watches how fast you move sideways, so keep horizontal speed modest: around 22 held up in Uranium's own matches, and AutoWin's Move boost above 2 gets flagged. Vertical movement is different, even a big teleport straight up is not flagged."
+            Text = "The anticheat watches how fast you move sideways, so keep horizontal speed modest: around 22 held up in CatVape's own matches, and AutoWin's Move boost above 2 gets flagged. Vertical movement is different, even a big teleport straight up is not flagged."
         },
         {
             Game = "BedWars",
@@ -1770,7 +1770,7 @@ local WriteJSON = Interface.WriteJSON
         {
             Modules = {"ProjectileAimbot", "AutoChargeProj"},
             Keywords = "executor executors solara xeno free paid work works working support supported debug unc sunc best which injector",
-            Text = "Uranium runs best on an executor with a full debug library and good sUNC support. Solara and Xeno have no debug library, so in BedWars modules that hook the game's own controllers, like AutoChargeProj, silently do nothing there. ProjectileAimbot still aims on them by turning your camera for the instant a shot releases, but Auto Charge is unavailable."
+            Text = "CatVape runs best on an executor with a full debug library and good sUNC support. Solara and Xeno have no debug library, so in BedWars modules that hook the game's own controllers, like AutoChargeProj, silently do nothing there. ProjectileAimbot still aims on them by turning your camera for the instant a shot releases, but Auto Charge is unavailable."
         },
         {
             Accent = {"Export config"},
@@ -1783,12 +1783,12 @@ local WriteJSON = Interface.WriteJSON
         },
         {
             Keywords = "mobile phone ipad tablet android ios touch support supported work works run runs",
-            Text = "Yes, Uranium works on mobile executors. Tap the Uranium button in the top bar to open the GUI, and hold a module for a second to place a button for it on your screen."
+            Text = "Yes, CatVape works on mobile executors. Tap the CatVape button in the top bar to open the GUI, and hold a module for a second to place a button for it on your screen."
         },
         {
-            Accent = {"Hide Uranium Button"},
+            Accent = {"Hide CatVape Button"},
             Keywords = "button missing gone hidden disappeared disappear invisible top bar icon mobile phone ipad tablet find anymore",
-            Text = "The Uranium button sits in the top bar on mobile. If it is gone, Hide Uranium Button in the GUI settings is probably on. That only makes it invisible, so tap the same spot to open the GUI and turn the setting off there."
+            Text = "The CatVape button sits in the top bar on mobile. If it is gone, Hide CatVape Button in the GUI settings is probably on. That only makes it invisible, so tap the same spot to open the GUI and turn the setting off there."
         },
         {
             Except = "IllegalSoccer",
@@ -3183,7 +3183,7 @@ local WriteJSON = Interface.WriteJSON
         local Guide, GuideScore = FindGuide(Query)
 
         if Text == "" then
-            return {Text = "Ask me anything about Uranium.", Actions = Suggestions()}
+            return {Text = "Ask me anything about CatVape.", Actions = Suggestions()}
         elseif #Words <= 3 and HasAny(Has, {"hi", "hello", "hey", "yo", "sup", "hiya", "howdy", "heya"}) then
             return Brain.Runners.Greet(nil, Question)
         elseif HasAny(Has, {"thanks", "thank", "ty", "thx", "tysm"}) then
@@ -3860,7 +3860,7 @@ local WriteJSON = Interface.WriteJSON
                 end)
 
                 local Name: string = Success and type(Info) == "table" and Info.Name or CurrentGame() or "this place"
-                return `You are in {Accent(Escape(Name))} (place {game.PlaceId}). Uranium loaded {CountModules()} modules for it.`
+                return `You are in {Accent(Escape(Name))} (place {game.PlaceId}). CatVape loaded {CountModules()} modules for it.`
             end
         },
         {
@@ -3898,17 +3898,17 @@ local WriteJSON = Interface.WriteJSON
         {
             Id = "version",
             Keywords = "version versions outdated date build newest latest update",
-            Needs = {{"version", "versions", "outdated", "date", "newest", "latest", "build", "update"}, {"i", "im", "am", "my", "uranium", "uranium", "last", "when", "need", "reexecute", "reinject", "today", "push", "pushed", "guys", "yall"}},
+            Needs = {{"version", "versions", "outdated", "date", "newest", "latest", "build", "update"}, {"i", "im", "am", "my", "Uranium", "vape", "last", "when", "need", "reexecute", "reinject", "today", "push", "pushed", "guys", "yall"}},
             Avoid = "new changed changes changelog added patch notes features fixed fix kit kits game roblox how devs",
             SkipModules = true,
             Run = function()
                 if shared.VapeDeveloper then
-                    return "You're in developer mode, so Uranium loads your local files and doesn't update itself."
+                    return "You're in developer mode, so CatVape loads your local files and doesn't update itself."
                 end
 
                 local Commit: string? = isfile(`{vape.Directory}/profiles/commit.txt`) and readfile(`{vape.Directory}/profiles/commit.txt`) or nil
                 local Build: string = Commit and Commit ~= "" and ` You're on build {Accent(Commit:sub(1, 7))}.` or ""
-                return `Uranium checks for a new build every time you execute it and downloads it if there is one, so you're on the newest version as of when you injected, unless the console (F9) showed "Failed to update".{Build} Ask me what's new to see what the latest update changed.`
+                return `CatVape checks for a new build every time you execute it and downloads it if there is one, so you're on the newest version as of when you injected, unless the console (F9) showed "Failed to update".{Build} Ask me what's new to see what the latest update changed.`
             end
         }
     }
@@ -4796,7 +4796,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
             {
                 Words = Brain.Set("doing up what whats"),
                 Replies = {
-                    "Not much, just hanging out in your Uranium menu waiting for questions. What are you up to?",
+                    "Not much, just hanging out in your CatVape menu waiting for questions. What are you up to?",
                     "Just sitting here in the menu, ready to help. What's up with you?"
                 }
             },
@@ -4807,23 +4807,23 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
         Identity = {
             {
                 Words = Brain.Set("made make created create coded code built build programmed developer developers dev devs owner owns wrote creator"),
-                Replies = {"The Uranium developers made me. I'm built right into the script's menu."}
+                Replies = {"The CatVape developers made me. I'm built right into the script's menu."}
             },
             {
                 Words = Brain.Set("ai bot real human person chatgpt gpt robot alive sentient fake program openai claude conscious"),
-                Replies = {`I'm a bot, not a real person, and I'm not ChatGPT either. I'm {AssistantName}, a small assistant that runs completely offline inside Uranium, so I only know Uranium and the game you're in. The upside is that I can actually click things for you.`}
+                Replies = {`I'm a bot, not a real person, and I'm not ChatGPT either. I'm {AssistantName}, a small assistant that runs completely offline inside CatVape, so I only know CatVape and the game you're in. The upside is that I can actually click things for you.`}
             },
             {
                 Words = Brain.Set("old age born birthday"),
-                Replies = {"I'm brand new, I was only just added to Uranium."}
+                Replies = {"I'm brand new, I was only just added to CatVape."}
             },
             {
                 Words = Brain.Set("where live from"),
-                Replies = {"I live right here in your Uranium menu, and I go wherever your script goes."}
+                Replies = {"I live right here in your CatVape menu, and I go wherever your script goes."}
             },
             {
                 Words = Brain.Set("name called call"),
-                Replies = {`My name is {AssistantName}. I know every module in Uranium and how this game works, so ask away.`}
+                Replies = {`My name is {AssistantName}. I know every module in CatVape and how this game works, so ask away.`}
             },
             {
                 Words = Brain.Set("boy girl male female gender"),
@@ -5028,7 +5028,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
             },
             {
                 Words = Brain.Set("friends friend girlfriend boyfriend family crush married dating"),
-                Replies = {"Every Uranium user is my friend, and that includes you."}
+                Replies = {"Every CatVape user is my friend, and that includes you."}
             },
             {
                 Words = Brain.Set("bedwars roblox game games play soccer tower"),
@@ -5036,20 +5036,20 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
             },
             {
                 Words = Brain.Set("think opinion"),
-                Replies = {"I don't really have opinions. I'm better with facts about Uranium and this game."}
+                Replies = {"I don't really have opinions. I'm better with facts about CatVape and this game."}
             },
             {
                 Words = Brain.Set("fun"),
                 Replies = {"Answering questions in your menu. It's more fun than it sounds."}
             },
             {
-                Replies = {"I don't really have a life outside this menu, but I know a lot about Uranium and this game. Ask me anything about them."}
+                Replies = {"I don't really have a life outside this menu, but I know a lot about CatVape and this game. Ask me anything about them."}
             }
         },
         Screenshot = {
             {
                 Replies = {
-                    "I can't see images or your screen. I can read Uranium directly though, so ask me what's on or about a module's settings and I'll check the real values.",
+                    "I can't see images or your screen. I can read CatVape directly though, so ask me what's on or about a module's settings and I'll check the real values.",
                     "Pictures don't reach me, sorry. Tell me which module it's about and I'll read its live settings instead."
                 },
                 Chips = {"What modules are on?"}
@@ -5058,15 +5058,15 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
         Code = {
             {
                 Replies = {
-                    "I don't write scripts or code. What I can do is explain how any Uranium module works and run things for you, like turning modules on or changing values. Tell me what you're trying to do and I'll find the module for it.",
-                    "Writing code isn't something I do. I'm here to explain Uranium and set it up for you, so tell me the goal and I'll point you to the module that does it."
+                    "I don't write scripts or code. What I can do is explain how any CatVape module works and run things for you, like turning modules on or changing values. Tell me what you're trying to do and I'll find the module for it.",
+                    "Writing code isn't something I do. I'm here to explain CatVape and set it up for you, so tell me the goal and I'll point you to the module that does it."
                 }
             }
         },
         Offtopic = {
             {
                 Words = Brain.Set("weather rain raining temperature forecast sunny"),
-                Replies = {"I can't check the weather, I don't use the internet. I only know Uranium and the game you're in."}
+                Replies = {"I can't check the weather, I don't use the internet. I only know CatVape and the game you're in."}
             },
             {
                 Words = Brain.Set("won election president stock stocks crypto bitcoin nba nfl basketball richest famous celebrity"),
@@ -5082,16 +5082,16 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
             },
             {
                 Words = Brain.Set("meaning universe"),
-                Replies = {"42, or so I've heard. I'm much better with Uranium questions."}
+                Replies = {"42, or so I've heard. I'm much better with CatVape questions."}
             },
             {
                 Words = Brain.Set("recommend watch movie movies song songs music anime show"),
-                Replies = {"I don't know much outside Uranium, so no recommendations from me, sorry."}
+                Replies = {"I don't know much outside CatVape, so no recommendations from me, sorry."}
             },
             {
                 Replies = {
-                    "That's outside what I know. I run offline inside Uranium, so I only know Uranium and the game you're in.",
-                    "I don't know that one. I only know Uranium and the game you're in, and I can't look things up online."
+                    "That's outside what I know. I run offline inside CatVape, so I only know CatVape and the game you're in.",
+                    "I don't know that one. I only know CatVape and the game you're in, and I can't look things up online."
                 },
                 Suggest = true
             }
@@ -5688,7 +5688,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
         afk = Brain.Set("idle afk"),
         gui = Brain.Set("menu gui inventory")
     }
-    Brain.ModuleWords = {"module", "modules", "mod", "mods", "something", "anything", "uranium", "uranium", "setting", "settings", "script", "cheat", "cheats", "hack", "hacks", "feature", "features", "thing", "smth"}
+    Brain.ModuleWords = {"module", "modules", "mod", "mods", "something", "anything", "Uranium", "vape", "setting", "settings", "script", "cheat", "cheats", "hack", "hacks", "feature", "features", "thing", "smth"}
     Brain.Markers = {
         Compare = Brain.Set("vs versus difference different differences better best which or compare comparison instead prefer rather same similar"),
         Together = Brain.Set("together both conflict conflicts conflicting clash clashes clashing interfere interferes compatible combine combo alongside fine ok okay safe mess stack stacks cancel cancels overlap overlaps combined while block blocks blocking before first plus eat eats steal steals override overrides fires"),
@@ -5801,7 +5801,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
                 local Name: string? = Text:match("[Ww]ait[Ff]or[Cc]hild%([\"']([^\"']+)") or Text:match("on '([^']+)'")
                 return `A script is still waiting for {Name and Accent(Escape(Name)) or "something"} to show up after 5 seconds.`
             end,
-            Cause = "It's only a warning, not a crash, and if it doesn't mention Uranium it's usually the game's own script."
+            Cause = "It's only a warning, not a crash, and if it doesn't mention CatVape it's usually the game's own script."
         },
         {
             Find = {"unable to cast"},
@@ -5882,7 +5882,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
         {
             Find = {"syntax error", "malformed number", "unexpected symbol", "expected '", "expected identifier", "incomplete statement"},
             Explain = "The code has a typo (a syntax error), so it couldn't load at all.",
-            Cause = "If it's Uranium, the download may have been cut off, so execute it again to download it fresh."
+            Cause = "If it's CatVape, the download may have been cut off, so execute it again to download it fresh."
         },
         {
             Find = {"requested module experienced an error"},
@@ -6600,19 +6600,19 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
         end
 
         local Mentioned = FindMentions(Normalize(Question):split(" "))
-        local Ours: boolean = Mentioned[1] ~= nil or Lower:find("uranium", 1, true) ~= nil or Lower:find("catsix", 1, true) ~= nil
+        local Ours: boolean = Mentioned[1] ~= nil or Lower:find("Uranium", 1, true) ~= nil or Lower:find("catsix", 1, true) ~= nil
         if Mentioned[1] then
             LastTopic = Mentioned[1].Key
             table.insert(Lines, `It came from {Accent(Mentioned[1].Name)}, so that's the module to look at.`)
         elseif Ours then
-            table.insert(Lines, "It came from Uranium.")
+            table.insert(Lines, "It came from CatVape.")
         elseif Lower:find("playerscripts", 1, true) or Lower:find("replicatedstorage", 1, true) or Lower:find("replicatedfirst", 1, true) or Lower:find("starterplayer", 1, true) then
-            table.insert(Lines, "That line comes from the game's own scripts, not Uranium, so you can ignore it.")
+            table.insert(Lines, "That line comes from the game's own scripts, not CatVape, so you can ignore it.")
         elseif Lower:find("coregui", 1, true) or Lower:find("corepackages", 1, true) or Lower:find("corescripts", 1, true) then
-            table.insert(Lines, "That line comes from Roblox itself, not Uranium.")
+            table.insert(Lines, "That line comes from Roblox itself, not CatVape.")
         elseif Read(Known.Executor) then
             local Success, Name = pcall(identifyexecutor)
-            table.insert(Lines, Success and Name and `You're on {Accent(tostring(Name))}, so that's an executor limit, not a Uranium bug.` or "That's an executor limit, not a Uranium bug.")
+            table.insert(Lines, Success and Name and `You're on {Accent(tostring(Name))}, so that's an executor limit, not a CatVape bug.` or "That's an executor limit, not a CatVape bug.")
         else
             table.insert(Lines, "I can't tell which script it came from without the rest of the line, so paste the whole thing if you want me to narrow it down.")
         end
@@ -6727,7 +6727,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
         local Culprits = Brain.Culprits(Tokens)
         local First = Culprits[1]
         if not First then
-            return {Text = "Nothing you have on matches that, so it's probably the game rather than Uranium. Which module were you using when it happened?"}
+            return {Text = "Nothing you have on matches that, so it's probably the game rather than CatVape. Which module were you using when it happened?"}
         end
 
         local Lines: {string} = {`{Brain.CulpritLine(First, "")} That sounds like what you're seeing.`}
@@ -6803,7 +6803,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
                 table.insert(Steps, `Turn {Accent(Culprit.Entry.Name)} off for a moment and see if it stops.`)
                 table.insert(Entries, Culprit.Entry)
             else
-                table.insert(Lines, `None of the modules you have on are {Symptom.Doing}, so it's probably not Uranium.{Symptom.Quiet and ` {Symptom.Quiet}` or ""}`)
+                table.insert(Lines, `None of the modules you have on are {Symptom.Doing}, so it's probably not CatVape.{Symptom.Quiet and ` {Symptom.Quiet}` or ""}`)
             end
         end
 
@@ -6891,7 +6891,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
             table.insert(Steps, `If you've been playing for a long time or reinjected a few times, rejoin, memory builds up.{Fixing}`)
         end
 
-        table.insert(Steps, "If nothing changes with everything off, it's the game or your device, not Uranium.")
+        table.insert(Steps, "If nothing changes with everything off, it's the game or your device, not CatVape.")
         table.insert(Lines, Brain.Numbered(Steps))
 
         local Booster = Index.Keys.fpsbooster
@@ -7139,7 +7139,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
             end
 
             if Uses.Hook then
-                table.insert(Lines, "It changes some of the game's own code, so a game update can break it until Uranium is updated.")
+                table.insert(Lines, "It changes some of the game's own code, so a game update can break it until CatVape is updated.")
             end
 
             if Uses.Frame then
@@ -7484,7 +7484,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
 
         if #Picked == 0 then
             local Closest = Results[1] and Results[1].Score >= 2 and Results[1].Entry
-            table.insert(Lines, `I'm not certain Uranium has a module for that{CurrentGame() and " in this game" or ""}.{Closest and ` The closest I can find is {Accent(Closest.Name)}, but it may not be what you're after.` or ""}`)
+            table.insert(Lines, `I'm not certain CatVape has a module for that{CurrentGame() and " in this game" or ""}.{Closest and ` The closest I can find is {Accent(Closest.Name)}, but it may not be what you're after.` or ""}`)
             if Fact and Score >= Brain.FactOver then
                 table.insert(Lines, FactText(Fact))
             end
@@ -7957,7 +7957,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
         if Style == "Default" then
             table.insert(Lines, `Reset {Accent(Entry.Name)} to its default settings:`)
         elseif Text then
-            table.insert(Lines, `Set {Accent(Entry.Name)} up for {Name} play, using the values from Uranium's {Brain.Presets[Style]} preset{Only and ` (it's the only preset that runs {Entry.Name})` or ""}:`)
+            table.insert(Lines, `Set {Accent(Entry.Name)} up for {Name} play, using the values from CatVape's {Brain.Presets[Style]} preset{Only and ` (it's the only preset that runs {Entry.Name})` or ""}:`)
         else
             table.insert(Lines, `I don't have a tested {Name} setup for {Accent(Entry.Name)}, so these are starting points from what each setting does:`)
         end
@@ -8065,7 +8065,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
 
             vape:Save()
             Reply({
-                Text = `{Accent(Profile)} is ready and you're on it. {Recipe and `It's built from Uranium's {Brain.Presets[Style]} preset` or `I don't have a tested preset for this game, so it has the core modules with {Name} starting values`}: {#Names} module{#Names == 1 and "" or "s"} on ({Accent(JoinNames(Names, 8))}), and {Tuned} module{Tuned == 1 and "" or "s"} set up for {Name} play. Speed, Fly and LongJump stay off, put them on a bind.`,
+                Text = `{Accent(Profile)} is ready and you're on it. {Recipe and `It's built from CatVape's {Brain.Presets[Style]} preset` or `I don't have a tested preset for this game, so it has the core modules with {Name} starting values`}: {#Names} module{#Names == 1 and "" or "s"} on ({Accent(JoinNames(Names, 8))}), and {Tuned} module{Tuned == 1 and "" or "s"} set up for {Name} play. Speed, Fly and LongJump stay off, put them on a bind.`,
                 Actions = {
                     {
                         Text = `Back to {Previous}`,
@@ -10482,7 +10482,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
             end
         end
 
-        return {Text = "Ask me anything about Uranium.", Actions = Suggestions()}
+        return {Text = "Ask me anything about CatVape.", Actions = Suggestions()}
     end
 
     function Brain.OffTopic(Decision, Question: string): boolean
@@ -11392,7 +11392,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
 
         local Decision = Brain.Understand(Question)
         if Decision.Kind == "Empty" then
-            return {Text = "Ask me anything about Uranium.", Actions = Suggestions()}
+            return {Text = "Ask me anything about CatVape.", Actions = Suggestions()}
         elseif Decision.Kind == "Elsewhere" then
             Brain.LastIntent = nil
             return Brain.ElsewhereReply(Decision.Absent, Decision.Tokens)
@@ -11491,7 +11491,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
             "Ready when you are.",
             "What are we setting up today?",
             "Need a hand with something?",
-            "Ask me anything about Uranium.",
+            "Ask me anything about CatVape.",
             "What's the plan?",
             "How can I help?"
         },
@@ -11663,7 +11663,7 @@ someone somebody anyone anybody everyone everybody nobody something anything eve
     InputBox.ClipsDescendants = true
     InputBox.FontFace = UIPallet.Font
     InputBox.PlaceholderColor3 = Color.Dark(UIPallet.Text, 0.4)
-    InputBox.PlaceholderText = "Ask Uranium anything"
+    InputBox.PlaceholderText = "Ask CatVape anything"
     InputBox.Text = ""
     InputBox.TextColor3 = UIPallet.Text
     InputBox.TextSize = 14
